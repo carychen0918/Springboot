@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carychen.springboot_mybatis.demo.dao.user_infoMapper">
+  <resultMap id="UserMap" type="com.carychen.springboot_mybatis.demo.entity.user_info">
+    <id column="id" javaType="java.lang.Integer" jdbcType="INTEGER" property="id"/>
+    <result column="user_name" javaType="java.lang.String" jdbcType="VARCHAR" property="userName" />
+    <result column="user_login" javaType="java.lang.String" jdbcType="VARCHAR" property="userLogin"/>
+    <result column="login_password" javaType="java.lang.String" jdbcType="VARCHAR" property="loginPassword" />
+    <result column="user_status" javaType="java.lang.Integer" jdbcType="INTEGER" property="userStatus" />
+    <result column="user_org" javaType="java.lang.Integer" jdbcType="INTEGER" property="userOrg" />
+    <result column="user_phone" javaType="java.lang.String" jdbcType="VARCHAR" property="userPhone" />
+    <result column="user_remark" javaType="java.lang.String" jdbcType="VARCHAR" property="userRemark" />
+    <result column="user_sex" javaType="java.lang.Integer" jdbcType="INTEGER" property="userSex" />
+    <result column="user_email" javaType="java.lang.String" jdbcType="VARCHAR" property="userEmail"  />
+    <result column="user_sys" javaType="java.lang.Integer" jdbcType="INTEGER" property="userSys" />
+    <result column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="roleId" />
+    <result column="user_on" javaType="java.lang.String" jdbcType="VARCHAR" property="userOn" />
+  </resultMap>
+  <sql id="user_info_list">
+    id, user_name userName, user_login userLogin, login_password loginPassword, user_status userStatus, user_org userOrg, user_phone userPhone, user_remark userRemark,
+    user_sex userSex, user_email userEmail , user_sys userSys, role_id roleId, user_on userOn
+  </sql>
+  <sql id="user_info_list1">
+    id, user_name , user_login , login_password , user_status , user_org , user_phone , user_remark ,
+    user_sex, user_email  , user_sys , role_id , user_on
+  </sql>
+  <delete id="delUserInfo" parameterType="java.lang.Integer">
+    delete from user_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="saveUserInfo" parameterType="com.carychen.springboot_mybatis.demo.entity.user_info">
+    insert into user_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="userLogin != null">
+        user_login,
+      </if>
+      <if test="loginPassword != null">
+        login_password,
+      </if>
+      <if test="userStatus != null">
+        user_status,
+      </if>
+      <if test="userOrg != null">
+        user_org,
+      </if>
+      <if test="userPhone != null">
+        user_phone,
+      </if>
+      <if test="userRemark != null">
+        user_remark,
+      </if>
+      <if test="userSex != null">
+        user_sex,
+      </if>
+      <if test="userEmail != null">
+        user_email,
+      </if>
+      <if test="userSys != null">
+        user_sys,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="userOn != null">
+        user_on,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userLogin != null">
+        #{userLogin,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPassword != null">
+        #{loginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="userStatus != null">
+        #{userStatus,jdbcType=INTEGER},
+      </if>
+      <if test="userOrg != null">
+        #{userOrg,jdbcType=INTEGER},
+      </if>
+      <if test="userPhone != null">
+        #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="userRemark != null">
+        #{userRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="userSex != null">
+        #{userSex,jdbcType=INTEGER},
+      </if>
+      <if test="userEmail != null">
+        #{userEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="userSys != null">
+        #{userSys,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="userOn != null">
+        #{userOn,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="upUserInfo" parameterType="com.carychen.springboot_mybatis.demo.entity.user_info">
+    update user_info
+    <set>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userLogin != null">
+        user_login = #{userLogin,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPassword != null">
+        login_password = #{loginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="userStatus != null">
+        user_status = #{userStatus,jdbcType=INTEGER},
+      </if>
+      <if test="userOrg != null">
+        user_org = #{userOrg,jdbcType=INTEGER},
+      </if>
+      <if test="userPhone != null">
+        user_phone = #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="userRemark != null">
+        user_remark = #{userRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="userSex != null">
+        user_sex = #{userSex,jdbcType=INTEGER},
+      </if>
+      <if test="userEmail != null">
+        user_email = #{userEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="userSys != null">
+        user_sys = #{userSys,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="userOn != null">
+        user_on = #{userOn,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="login" resultType="com.carychen.springboot_mybatis.demo.entity.user_info">
+    select <include refid="user_info_list"/>
+    from user_info where 1=1
+    and login_password= #{user_paw} and user_login = #{user_long}
+  </select>
+  <select id="getUserInfoAll" resultMap="UserMap">
+        select <include refid="user_info_list1"/>
+        from user_info where 1=1
+        <if test="sys_id!=-1">
+            and user_sys = #{sys_id}
+        </if>
+        <if test="name !=null and name != ''">
+            and(user_name like '%${name}%' or user_phone like '%${name}%' or user_login like '%${name}%')
+        </if>
+        <if test="org_id!=-1">
+          and user_org =#{org_id}
+        </if>
+        limit #{page},#{limit}
+  </select>
+  <select id="getUserCount" resultType="java.lang.Integer">
+      select count(0) as tabl
+      from user_info where 1=1
+      <if test="sys_id!=-1">
+        and user_sys = #{sys_id}
+      </if>
+      <if test="name !=null and name != ''">
+        and(user_name like '%${name}%' or user_phone like '%${name}%' or user_on like '%${name}%')
+      </if>
+      <if test="org_id!=-1">
+        and user_org =#{org_id}
+      </if>
+  </select>
+  <select id="getUserListBySysid" resultMap="UserMap">
+    select <include refid="user_info_list1"/>
+    from user_info where 1=1
+    <if test="sys_id!=-1">
+      and user_sys = #{sys_id}
+    </if>
+    and user_status = 1
+  </select>
+</mapper>

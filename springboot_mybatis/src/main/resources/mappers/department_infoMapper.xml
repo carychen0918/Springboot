@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carychen.springboot_mybatis.demo.dao.department_infoMapper">
+  <resultMap id="departmentMap" type="com.carychen.springboot_mybatis.demo.entity.department_info">
+    <constructor>
+      <idArg column="d_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="d_nanem" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="d_teacher_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="d_teacher_phone" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="d_teacher_email" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="d_sup_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    </constructor>
+  </resultMap>
+  <sql id="department_list">
+    d_id, d_nanem, d_teacher_name, d_teacher_phone, d_teacher_email, d_sup_id
+  </sql>
+  <select id="getDepartmentByid" parameterType="java.lang.Integer" resultMap="departmentMap">
+    select 
+    <include refid="department_list" />
+    from department_info
+    where d_id = #{d_id,jdbcType=INTEGER}
+  </select>
+  <delete id="delDepartment" parameterType="java.lang.Integer">
+    delete from department_info
+    where d_id = #{d_id,jdbcType=INTEGER}
+  </delete>
+  <insert id="saveDepartment" parameterType="com.carychen.springboot_mybatis.demo.entity.department_info">
+    insert into department_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="d_id != null">
+        d_id,
+      </if>
+      <if test="d_nanem != null">
+        d_nanem,
+      </if>
+      <if test="d_teacher_name != null">
+        d_teacher_name,
+      </if>
+      <if test="d_teacher_phone != null">
+        d_teacher_phone,
+      </if>
+      <if test="d_teacher_email != null">
+        d_teacher_email,
+      </if>
+      <if test="d_sup_id != null">
+        d_sup_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="d_id != null">
+        #{d_id,jdbcType=INTEGER},
+      </if>
+      <if test="d_nanem != null">
+        #{d_nanem,jdbcType=VARCHAR},
+      </if>
+      <if test="d_teacher_name != null">
+        #{d_teacher_name,jdbcType=VARCHAR},
+      </if>
+      <if test="d_teacher_phone != null">
+        #{d_teacher_phone,jdbcType=VARCHAR},
+      </if>
+      <if test="d_teacher_email != null">
+        #{d_teacher_email,jdbcType=VARCHAR},
+      </if>
+      <if test="d_sup_id != null">
+        #{d_sup_id,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="upDepartment" parameterType="com.carychen.springboot_mybatis.demo.entity.department_info">
+    update department_info
+    <set>
+      <if test="d_nanem != null">
+        d_nanem = #{d_nanem,jdbcType=VARCHAR},
+      </if>
+      <if test="d_teacher_name != null">
+        d_teacher_name = #{d_teacher_name,jdbcType=VARCHAR},
+      </if>
+      <if test="d_teacher_phone != null">
+        d_teacher_phone = #{d_teacher_phone,jdbcType=VARCHAR},
+      </if>
+      <if test="d_teacher_email != null">
+        d_teacher_email = #{d_teacher_email,jdbcType=VARCHAR},
+      </if>
+      <if test="d_sup_id != null">
+        d_sup_id = #{d_sup_id,jdbcType=INTEGER},
+      </if>
+    </set>
+    where d_id = #{d_id,jdbcType=INTEGER}
+  </update>
+  <select id="getDepartmentAll" resultMap="departmentMap">
+    select
+    <include refid="department_list" />
+    from department_info
+    where 1=1
+    <if test="name!=null and name!=''">
+        and (d_nanem like '%${name}%' or d_teacher_name like '%${name}%' or d_teacher_phone like '%${name}%')
+    </if>
+    <if test="sup_id !=0">
+        and (d_sup_id = #{sup_id} or d_id =#{sup_id})
+    </if>
+    limit #{page},#{limit}
+  </select>
+  <select id="getCount" resultType="java.lang.Integer">
+    select count(0) tabl from department_info
+    where 1=1
+    <if test="name!=null and name!=''">
+      and (d_nanem like '%${name}%' or d_teacher_name like '%${name}%' or d_teacher_phone like '%${name}%')
+    </if>
+    <if test="sup_id !=0">
+      and (d_sup_id = #{sup_id} or d_id =#{sup_id})
+    </if>
+  </select>
+  <select id="getDepartmentBySupid" resultMap="departmentMap">
+    select
+    <include refid="department_list" />
+    from department_info
+    where 1=1
+      and d_sup_id = #{sup_id}
+  </select>
+  <select id="getFatherDid" resultType="com.carychen.springboot_mybatis.demo.entity.department_info">
+    select
+    <include refid="department_list" />
+    from department_info
+    where 1=1
+    and d_id = #{sup_id}
+  </select>
+  <select id="selDepartment" resultType="com.carychen.springboot_mybatis.demo.entity.department_info">
+    select
+    <include refid="department_list" />
+    from department_info
+    where 1=1
+    and d_sup_id = #{sup_id} and d_nanem = #{d_name}
+  </select>
+</mapper>

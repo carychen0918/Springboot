@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carychen.springboot_mybatis.demo.dao.system_infoMapper">
+  <resultMap id="SystemMap" type="com.carychen.springboot_mybatis.demo.entity.system_info">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="sys_code" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="sys_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="sys_url" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="sys_main_url" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="sys_status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="sys_remark" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <sql id="SystemList">
+    id, sys_code, sys_name, sys_url, sys_main_url, sys_status, sys_remark
+  </sql>
+  <select id="getSystmByid" parameterType="java.lang.Integer" resultMap="SystemMap">
+    select 
+    <include refid="SystemList" />
+    from system_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getSystemAll" resultMap="SystemMap">
+        select
+        <include refid="SystemList"/>
+        from system_info
+        where 1=1
+        <if test="Name!=null and Name!=''">
+          and (sys_code like '%${Name}%' or sys_name like '%${Name}%')
+        </if>
+        limit #{page},#{limit}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer">
+    select count(0)as tabl from system_info where 1=1
+    <if test="Name !=null and Name != ''">
+      and (sys_code like '%${Name}%' or sys_name like '%${Name}%')
+    </if>
+  </select>
+  <delete id="deSystemByid" parameterType="java.lang.Integer">
+    delete from system_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="saveSystem" parameterType="com.carychen.springboot_mybatis.demo.entity.system_info">
+    insert into system_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="sysCode != null">
+        sys_code,
+      </if>
+      <if test="sysName != null">
+        sys_name,
+      </if>
+      <if test="sysUrl != null">
+        sys_url,
+      </if>
+      <if test="sysMainUrl != null">
+        sys_main_url,
+      </if>
+      <if test="sysStatus != null">
+        sys_status,
+      </if>
+      <if test="sysRemark != null">
+        sys_remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="sysCode != null">
+        #{sysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sysName != null">
+        #{sysName,jdbcType=VARCHAR},
+      </if>
+      <if test="sysUrl != null">
+        #{sysUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sysMainUrl != null">
+        #{sysMainUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sysStatus != null">
+        #{sysStatus,jdbcType=INTEGER},
+      </if>
+      <if test="sysRemark != null">
+        #{sysRemark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="upSystem" parameterType="com.carychen.springboot_mybatis.demo.entity.system_info">
+    update system_info
+    <set>
+      <if test="sysCode != null">
+        sys_code = #{sysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sysName != null">
+        sys_name = #{sysName,jdbcType=VARCHAR},
+      </if>
+      <if test="sysUrl != null">
+        sys_url = #{sysUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sysMainUrl != null">
+        sys_main_url = #{sysMainUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sysStatus != null">
+        sys_status = #{sysStatus,jdbcType=INTEGER},
+      </if>
+      <if test="sysRemark != null">
+        sys_remark = #{sysRemark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getSystemInfo" resultMap="SystemMap">
+        select * from system_info
+  </select>
+
+</mapper>

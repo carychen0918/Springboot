@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carychen.springboot_mybatis.demo.dao.student_outMapper">
+    <resultMap id="student_out_map" type="com.carychen.springboot_mybatis.demo.entity.student_out">
+        <id column="o_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="o_id"/>
+        <result column="s_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="s_id"/>
+        <result column="out_time" javaType="java.lang.String" jdbcType="VARCHAR" property="out_time"/>
+        <result column="u_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="u_id"/>
+        <result column="add_time" javaType="java.lang.String" jdbcType="VARCHAR" property="add_time"/>
+        <result column="out_reason" javaType="java.lang.String" jdbcType="LONGVARCHAR" property="out_reason"/>
+        <association property="student_info" javaType="com.carychen.springboot_mybatis.demo.entity.Student_info"
+                     column="s_id">
+            <id column="s_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="s_id"/>
+            <result column="s_name" javaType="java.lang.String" jdbcType="VARCHAR" property="s_name"/>
+            <result column="s_sex" javaType="java.lang.Integer" jdbcType="INTEGER" property="s_sex"/>
+            <result column="c_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="c_id"/>
+            <result column="s_phone" javaType="java.lang.String" jdbcType="VARCHAR" property="s_phone"/>
+            <result column="s_email" javaType="java.lang.String" jdbcType="VARCHAR" property="s_email"/>
+            <result column="s_urgent_phone" javaType="java.lang.String" jdbcType="VARCHAR" property="s_urgent_phone"/>
+            <result column="s_urgent_name" javaType="java.lang.String" jdbcType="VARCHAR" property="s_urgent_name"/>
+            <result column="s_urgent_address" javaType="java.lang.String" jdbcType="VARCHAR"
+                    property="s_urgent_address"/>
+            <result column="s_id_number" javaType="java.lang.String" jdbcType="VARCHAR" property="s_id_number"/>
+            <result column="s_session" javaType="java.lang.String" jdbcType="VARCHAR" property="s_session"/>
+            <result column="d_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="d_id"/>
+            <result column="s_state" javaType="java.lang.Integer" jdbcType="INTEGER" property="s_state"/>
+            <association property="dormitoryInfo" javaType="com.carychen.springboot_mybatis.demo.entity.dormitory_info"
+                         column="d_id">
+                <id column="d_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="d_id"/>
+                <result column="f_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_id"/>
+                <result column="max_number" javaType="java.lang.Integer" jdbcType="INTEGER" property="max_number"/>
+                <result column="d_number" javaType="java.lang.String" jdbcType="VARCHAR" property="d_number"/>
+                <result column="current_number" javaType="java.lang.Integer" jdbcType="INTEGER"
+                        property="current_number"/>
+                <association property="floorInfo" javaType="com.carychen.springboot_mybatis.demo.entity.floor_info"
+                             column="f_id">
+                    <id column="f_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_id"/>
+                    <result column="u_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="u_id"/>
+                    <result column="f_name" javaType="java.lang.String" jdbcType="VARCHAR" property="f_name"/>
+                    <result column="add_time" javaType="java.lang.String" jdbcType="VARCHAR" property="add_time"/>
+                    <result column="add_by" javaType="java.lang.Integer" jdbcType="INTEGER" property="add_by"/>
+                    <result column="up_date" javaType="java.lang.String" jdbcType="VARCHAR" property="up_date"/>
+                    <result column="up_by" javaType="java.lang.Integer" jdbcType="INTEGER" property="up_by"/>
+                    <result column="f_sex" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_sex"/>
+                    <result column="f_number" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_number"/>
+                </association>
+            </association>
+            <association property="departmentInfo"
+                         javaType="com.carychen.springboot_mybatis.demo.entity.department_info" column="c_id">
+                <id column="d_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+                <result column="d_nanem" javaType="java.lang.String" jdbcType="VARCHAR" property="d_nanem"/>
+                <result column="d_teacher_name" javaType="java.lang.String" jdbcType="VARCHAR"
+                        property="d_teacher_name"/>
+                <result column="d_teacher_phone" javaType="java.lang.String" jdbcType="VARCHAR"
+                        property="d_teacher_phone"/>
+                <result column="d_teacher_email" javaType="java.lang.String" jdbcType="VARCHAR"
+                        property="d_teacher_email"/>
+                <result column="d_sup_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="d_sup_id"/>
+            </association>
+        </association>
+        <association property="user_info" column="u_id" javaType="com.carychen.springboot_mybatis.demo.entity.user_info">
+            <id column="id" javaType="java.lang.Integer" jdbcType="INTEGER" property="id"/>
+            <result column="user_name" javaType="java.lang.String" jdbcType="VARCHAR" property="userName"/>
+            <result column="user_login" javaType="java.lang.String" jdbcType="VARCHAR" property="userLogin"/>
+            <result column="login_password" javaType="java.lang.String" jdbcType="VARCHAR" property="loginPassword"/>
+            <result column="user_status" javaType="java.lang.Integer" jdbcType="INTEGER" property="userStatus"/>
+            <result column="user_org" javaType="java.lang.Integer" jdbcType="INTEGER" property="userOrg"/>
+            <result column="user_phone" javaType="java.lang.String" jdbcType="VARCHAR" property="userPhone"/>
+            <result column="user_remark" javaType="java.lang.String" jdbcType="VARCHAR" property="userRemark"/>
+            <result column="user_sex" javaType="java.lang.Integer" jdbcType="INTEGER" property="userSex"/>
+            <result column="user_email" javaType="java.lang.String" jdbcType="VARCHAR" property="userEmail"/>
+            <result column="user_sys" javaType="java.lang.Integer" jdbcType="INTEGER" property="userSys"/>
+            <result column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="roleId"/>
+            <result column="user_on" javaType="java.lang.String" jdbcType="VARCHAR" property="userOn"/>
+        </association>
+    </resultMap>
+    <sql id="student_out_list">
+    o_id, s_id, out_time, u_id, add_time
+  </sql>
+    <sql id="Blob_Column_List">
+    out_reason
+  </sql>
+    <select id="getStudentOutAll" resultMap="student_out_map">
+        select o.*,s.*,d.*,f.*,e.*,u.id,u.user_name userName, u.user_login userLogin, u.login_password loginPassword,
+        u.user_status userStatus, u.user_org userOrg, u.user_phone userPhone, u.user_remark userRemark,
+        u.user_sex userSex, u.user_email userEmail , u.user_sys userSys, u.role_id roleId, u.user_on userOn
+        from student_out o inner join Student_info s on o.s_id=s.s_id
+        left join dormitory_info d on s.d_id = d.d_id inner join floor_info f on d.f_id =f.f_id
+        left join department_info e on s.c_id =e.d_id
+        inner join user_info u on u.id = o.u_id
+        where 1=1
+        <if test="name !=null and name !=''">
+            and (s.s_name like '%${name}%' or s.s_id_number like '%${name}%')
+        </if>
+        <if test="c_id != -1">
+            and s.c_id in(select d_id from department_info where d_sup_id in (select d_id from department_info where
+            d_sup_id=#{c_id} or d_id=#{c_id} GROUP BY d_id))
+        </if>
+        <if test="out_time!=null and out_time !=''">
+            and DATE_FORMAT(out_time,'%Y-%m-%d %H:%i:%s') > date_format(#{out_time},'%Y-%m-%d %H:%i:%s')
+            and DATE_FORMAT(out_time,'%Y-%m-%d %H:%i:%s') &lt; date_format(#{out_time1},'%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="d_number !=null and d_number!=''">
+            and d.d_number like '%${d_number}%'
+        </if>
+        order by o.out_time DESC
+        limit #{page},#{limit}
+    </select>
+
+    <select id="getCountStuout" resultType="java.lang.Integer">
+        select count(0) tabl
+        from student_out o inner join Student_info s on o.s_id=s.s_id
+        left join dormitory_info d on s.d_id = d.d_id inner join floor_info f on d.f_id =f.f_id
+        left join department_info e on s.c_id =e.d_id
+        inner join user_info u on u.id = o.u_id
+        where 1=1
+        <if test="name !=null and name !=''">
+            and (s.s_name like '%${name}%' or s.s_id_number like '%${name}%')
+        </if>
+        <if test="c_id != -1">
+            and s.c_id in(select d_id from department_info where d_sup_id in (select d_id from department_info where
+            d_sup_id=#{c_id} or d_id=#{c_id} GROUP BY d_id))
+        </if>
+        <if test="out_time!=null and out_time !=''">
+            and DATE_FORMAT(out_time,'%Y-%m-%d %H:%i:%s') > date_format(#{out_time},'%Y-%m-%d %H:%i:%s')
+            and DATE_FORMAT(out_time,'%Y-%m-%d %H:%i:%s') &lt; date_format(#{out_time1},'%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="d_number !=null and d_number!=''">
+            and d.d_number like '%${d_number}%'
+        </if>
+    </select>
+
+    <select id="getStudentOutByid" parameterType="java.lang.Integer" resultMap="student_out_map">
+        select
+        <include refid="student_out_list"/>
+        from student_out
+        where o_id = #{o_id,jdbcType=INTEGER}
+    </select>
+    <delete id="delStudentOut" parameterType="java.lang.Integer">
+    delete from student_out
+    where o_id = #{o_id,jdbcType=INTEGER}
+  </delete>
+    <insert id="saveStudentOut" parameterType="com.carychen.springboot_mybatis.demo.entity.student_out">
+        insert into student_out(out_time,u_id,add_time,out_reason) values
+        <foreach collection="list" item="student_out" separator=",">
+            (#{student_out.out_time},#{student_out.u_id},#{student_out.add_time},#{student_out.out_reason})
+        </foreach>
+    </insert>
+    <update id="upStudentoutByidlist" parameterType="java.lang.Integer">
+        update from student_info set s_state=1 where
+        <trim prefix="s_state in (" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="i" separator=",">
+                #{i},
+            </foreach>
+        </trim>
+    </update>
+    <update id="upStudentOut" parameterType="com.carychen.springboot_mybatis.demo.entity.student_out">
+        update student_out
+        <set>
+            <if test="s_id != null">
+                s_id = #{s_id,jdbcType=INTEGER},
+            </if>
+            <if test="out_time != null">
+                out_time = #{out_time,jdbcType=VARCHAR},
+            </if>
+            <if test="u_id != null">
+                u_id = #{u_id,jdbcType=INTEGER},
+            </if>
+            <if test="add_time != null">
+                add_time = #{add_time,jdbcType=VARCHAR},
+            </if>
+            <if test="out_reason != null">
+                out_reason = #{out_reason,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where o_id = #{o_id,jdbcType=INTEGER}
+    </update>
+    <update id="upDormitoryByid" parameterType="java.lang.Integer">
+         UPDATE dormitory_info
+        SET current_number = (current_number - #{index} )
+        WHERE
+       d_id = #{d_id}
+    </update>
+</mapper>

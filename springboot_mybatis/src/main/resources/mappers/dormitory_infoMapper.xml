@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carychen.springboot_mybatis.demo.dao.dormitory_infoMapper">
+  <resultMap id="dormitoryMap" type="com.carychen.springboot_mybatis.demo.entity.dormitory_info">
+      <id column="d_id" javaType="java.lang.Integer" jdbcType="INTEGER"  property="d_id"/>
+      <result column="f_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_id" />
+      <result column="max_number" javaType="java.lang.Integer" jdbcType="INTEGER" property="max_number" />
+      <result column="d_number" javaType="java.lang.String" jdbcType="VARCHAR" property="d_number"/>
+      <result column="current_number" javaType="java.lang.Integer" jdbcType="INTEGER" property="current_number" />
+    <association property="floorInfo" javaType="com.carychen.springboot_mybatis.demo.entity.floor_info" column="f_id">
+      <id column="f_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_id" />
+      <result column="u_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="u_id" />
+      <result column="f_name" javaType="java.lang.String" jdbcType="VARCHAR" property="f_name"/>
+      <result column="add_time" javaType="java.lang.String" jdbcType="VARCHAR" property="add_time" />
+      <result column="add_by" javaType="java.lang.Integer" jdbcType="INTEGER" property="add_by" />
+      <result column="up_date" javaType="java.lang.String" jdbcType="VARCHAR" property="up_date" />
+      <result column="up_by" javaType="java.lang.Integer" jdbcType="INTEGER" property="up_by"/>
+      <result column="f_sex" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_sex"/>
+      <result column="f_number" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_number" />
+      <association property="userInfo" javaType="com.carychen.springboot_mybatis.demo.entity.user_info" column="u_id">
+        <id column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="user_name" javaType="java.lang.String" jdbcType="VARCHAR" property="userName" />
+        <result column="user_login" javaType="java.lang.String" jdbcType="VARCHAR" property="userLogin"/>
+        <result column="user_status" javaType="java.lang.Integer" jdbcType="INTEGER" property="userStatus" />
+        <result column="user_org" javaType="java.lang.Integer" jdbcType="INTEGER" property="userOrg" />
+        <result column="user_phone" javaType="java.lang.String" jdbcType="VARCHAR" property="userPhone" />
+        <result column="user_remark" javaType="java.lang.String" jdbcType="VARCHAR" property="userRemark" />
+        <result column="user_sex" javaType="java.lang.Integer" jdbcType="INTEGER" property="userSex" />
+        <result column="user_email" javaType="java.lang.String" jdbcType="VARCHAR" property="userEmail"  />
+        <result column="user_sys" javaType="java.lang.Integer" jdbcType="INTEGER" property="userSys" />
+        <result column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="roleId" />
+        <result column="user_on" javaType="java.lang.String" jdbcType="VARCHAR" property="userOn" />
+      </association>
+    </association>
+  </resultMap>
+  <sql id="dormitory_list">
+    *
+  </sql>
+  <select id="getDormitoryByFid" parameterType="java.lang.Integer" resultMap="dormitoryMap">
+    select 
+    <include refid="dormitory_list" />
+    from dormitory_info
+    where f_id = #{f_id,jdbcType=INTEGER}
+  </select>
+  <delete id="delDormitory" parameterType="java.lang.Integer">
+    delete from dormitory_info
+    where d_id = #{d_id,jdbcType=INTEGER}
+  </delete>
+  <insert id="saveDormitory" parameterType="com.carychen.springboot_mybatis.demo.entity.dormitory_info">
+    insert into dormitory_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="d_id != null">
+        d_id,
+      </if>
+      <if test="f_id != null">
+        f_id,
+      </if>
+      <if test="max_number != null">
+        max_number,
+      </if>
+      <if test="d_number != null">
+        d_number,
+      </if>
+      <if test="current_number != null">
+        current_number,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="d_id != null">
+        #{d_id,jdbcType=INTEGER},
+      </if>
+      <if test="f_id != null">
+        #{f_id,jdbcType=INTEGER},
+      </if>
+      <if test="max_number != null">
+        #{max_number,jdbcType=INTEGER},
+      </if>
+      <if test="d_number != null">
+        #{d_number,jdbcType=VARCHAR},
+      </if>
+      <if test="current_number != null">
+        #{current_number,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="upDormitory" parameterType="com.carychen.springboot_mybatis.demo.entity.dormitory_info">
+    update dormitory_info
+    <set>
+      <if test="f_id != null">
+        f_id = #{f_id,jdbcType=INTEGER},
+      </if>
+      <if test="max_number != null">
+        max_number = #{max_number,jdbcType=INTEGER},
+      </if>
+      <if test="d_number != null">
+        d_number = #{d_number,jdbcType=VARCHAR},
+      </if>
+      <if test="current_number != null">
+        current_number = #{current_number,jdbcType=INTEGER},
+      </if>
+    </set>
+    where d_id = #{d_id,jdbcType=INTEGER}
+  </update>
+  <select id="getDormitoryAll" resultMap="dormitoryMap">
+        select <include refid="dormitory_list"/>
+        from dormitory_info d left join floor_info f on d.f_id = f.f_id left join user_info u on f.u_id=u.id
+        where 1=1
+        <if test="name!=null and name !=''">
+           and( f.f_name like '%${name}%' or u.user_name like '%${name}%')
+        </if>
+        <if test="f_sex != -1">
+           and f.f_sex =#{f_sex}
+        </if>
+        limit #{page},#{limit}
+  </select>
+  <select id="countDormitor" resultType="java.lang.Integer">
+        select count(0) tabl from dormitory_info d left join floor_info f on d.f_id = f.f_id left join user_info u on f.u_id=u.id
+        where 1=1
+        <if test="name!=null and name !=''">
+          and( f.f_name like '%${name}%' or u.user_name like '%${name}%')
+        </if>
+        <if test="f_sex != -1">
+          and f.f_sex =#{f_sex}
+        </if>
+  </select>
+</mapper>

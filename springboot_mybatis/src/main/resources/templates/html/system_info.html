@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>系统管理</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+</head>
+<body>
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <blockquote class="layui-elem-quote">
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input type="text" value="" placeholder="系统名称/编码" class="layui-input" id="sys_name_code"name="sys_name_code">
+                    </div>
+                    <a class="layui-btn layui-btn-primary search_btn"><i class="layui-icon">&#xe615;</i>查询</a>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-primary newsAdd_btn"><i class="layui-icon">&#xe654;</i>新增</a>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-primary menuEdit_btn"><i class="layui-icon">&#xe642;</i>修改</a>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-primary"href="javascript:location.replace(location.href);" title="刷新">
+                        <i class="layui-icon" style="line-height:38px">&#xe669;</i></a>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-form-mid layui-word-aux"></div>
+                </div>
+            </blockquote>
+            <div class="layui-form news_list">
+                <table class="layui-hide" id="datagrid" lay-size="sm" lay-data="{id: 'datagrid'}" lay-filter="TableFilter"></table>
+            </div>
+        </div>
+    </div>
+
+<!-- Modal -->
+<div id="sys_model" class="page_model" style="display:none;">
+    <div class="layui-show">
+        <div class="layui-form layui-form-pane">
+            <form id="testForm" method="post" style="padding: 5px; line-height: 5px;">
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">系统编码<span style="color:red">*</span></label>
+                    <div class="layui-input-block">
+                        <input type="text" id="sys_code" name="sys_code" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">系统名称<span style="color:red">*</span></label>
+                    <div class="layui-input-block">
+                        <input type="text" id="sys_name" name="sys_name" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">访问路径<span style="color:red">*</span></label>
+                    <div class="layui-input-block">
+                        <input type="text" id="sys_url" name="sys_url" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">主页路径<span style="color:red">*</span></label>
+                    <div class="layui-input-block">
+                        <input type="text" id="sys_main_url" name="sys_main_url" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-inline">
+                            <select name="sys_status" id="sys_status" value="1">
+                                <option value="1" >启用</option>
+                                <option value="0" >禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label  class="layui-form-label">系统备注</label>
+                    <div class="layui-input-block">
+                        <textarea id="sys_remark" name="sys_remark" placeholder="请输入系统备注" class="layui-textarea" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item page-form-btn"style="  display: none" >
+                    <button class="layui-btn" id="form_submit_btn" lay-filter="form_submit_btn" lay-submit>确定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+</body>
+<script th:src="@{/js/layui/layui.js}"></script>
+<script th:src="@{/js/util.js}"></script>
+<script>
+    layui.use(['table','form','jquery','layer'],function () {
+        var table = layui.table;
+        var form = layui.form;
+        var $ = layui.$;
+        var layer = layui.layer;
+
+        table.render({
+            elem: '#datagrid'
+            ,id: 'datagrid'
+            ,url:'/system/getSystemAll'
+            ,method: 'GET'
+            ,cols: [
+                [
+                    {type:'numbers'},
+                    {type:'radio'},
+                    {field:'sysCode', title: '系统编码',width:120,align:'left'}
+                    ,{field:'sysName', title: '系统名',align:'left'}
+                    ,{field:'sysUrl', title: '系统访问路径',align:'left'}
+                    ,{field:'sysMainUrl', title: '系统主页访问路径',align:'left'}
+                    ,{field:'sysStatus', title: '系统状态',width:120,align:'left',
+                    templet:function (d) {
+                        if(d.sysStatus ==1){
+                            return '<span>启用</span>';
+                        }else{
+                            return '<span>禁用</span>';
+                        }
+                    }
+            }
+                ]
+            ]
+            ,page: true
+            ,done: function(res, curr, count) {
+                console.log(res);
+                signleSelect($, 'datagrid');
+            }
+        });
+
+
+
+        //新增
+        $(".newsAdd_btn").click(function(){
+            openLayer($,layui.layer, {
+                title: '新增系统',     //显示标题
+                area: ['750px', '500px'], //宽高
+                content:  $('#sys_model'),
+                success: function(layero, index){
+                    form.render();
+                    //监听提交
+                    form.on('submit(form_submit_btn)', function(data){
+                        var loading = layer.load(1);
+                        var json = data.field;
+                        $.ajax({
+                            url:'/system/saveSystem',
+                            dataType:"JSON",
+                            type:'post',
+                            data:json,
+                            success:function (res) {
+                                layer.close(loading);
+                                if (res.success) {
+                                    layer.closeAll();
+                                    layer.msg(res.msg, {icon: 6});
+                                    ProcessTable('');
+                                } else {
+                                    layer.msg(res.msg, {icon: 5});
+                                }
+                            }
+                        });
+                        return false;
+                    });
+                }
+            }, '#form_submit_btn');
+        });
+
+        //修改
+        $(".menuEdit_btn").click(function () {
+            var checkStatus = table.checkStatus('datagrid');
+            if (checkStatus.data.length != 1) {
+                layer.msg("请选择一条数据。", {icon: 5});
+            }
+            else{
+                var datas = checkStatus.data[0];
+                form.render();
+                $("#sys_code").val(datas.sysCode);
+                $("#sys_main_url").val(datas.sysMainUrl);
+                $("#sys_url").val(datas.sysUrl)
+                $("#sys_name").val(datas.sysName);
+                $("#sys_remark").val(datas.sysRemark);
+                $("#sys_status").find("option[value='"+datas.sysStatus+"']").attr('selected',true);
+                form.render("select")
+                openLayer($,layui.layer, {
+                    title: '修改系统',     //显示标题
+                    area: ['750px', '500px'], //宽高
+                    content:  $('#sys_model'),
+                    success: function(layero, index){
+                        //监听提交
+                        form.on('submit(form_submit_btn)', function(data){
+                            var loading = layer.load(1);
+                            var json = data.field;
+                            json.id=datas.id;
+                            $.ajax({
+                                url:'/system/upsystem',
+                                dataType:"JSON",
+                                type:'post',
+                                data:json,
+                                success:function (res) {
+                                    layer.close(loading);
+                                    if (res.success) {
+                                        layer.closeAll();
+                                        layer.msg(res.msg, {icon: 6});
+                                        ProcessTable('');
+                                    } else {
+                                        layer.msg(res.msg, {icon: 5});
+                                    }
+                                }
+                            });
+                            return false;
+                        });
+                    }
+                }, '#form_submit_btn');
+            }
+        });
+        //重置表单数据
+        function ProcessTable(name) {
+            table.reload('datagrid', {
+                where: { //设定异步数据接口的额外参数，任意设
+                    name:name,
+                },
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        }
+
+        $(".search_btn").click(function () {
+            var name = $("#sys_name_code").val();
+            ProcessTable(name);
+        });
+
+    });
+</script>
+</html>

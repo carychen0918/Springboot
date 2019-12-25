@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>组织管理</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+</head>
+<body>
+<div class="layui-fluid gmdf-layui-fluid">
+    <div class="layui-row gmdf-layui-row">
+        <div class="layui-col-md2">
+            <form class="layui-form">
+                <div id="roletree" style="height:800px;border:0px;overflow:auto;">
+                </div>
+            </form>
+        </div>
+        <div class="layui-col-md10">
+            <blockquote class="layui-elem-quote news_search">
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input type="text" value="" id="name" name="name" placeholder="请输入机构编码/名称" class="layui-input search_input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-form">
+                        <select name="sys_code" id="sys_code"  lay-filter="sel_code" lay-search>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-primary search_btn"><i class="layui-icon">&#xe615;</i>查询</a>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-primary newsAdd_btn"><i class="layui-icon">&#xe654;</i>新增</a>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-primary Edit_btn"><i class="layui-icon">&#xe642;</i>修改</a>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-primary"href="javascript:location.replace(location.href);" title="刷新">
+                        <i class="layui-icon" style="line-height:38px">&#xe669;</i></a>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-form-mid layui-word-aux"></div>
+                </div>
+            </blockquote>
+            <div class="layui-form news_list">
+                <table class="layui-hide" id="datagrid" lay-data="{id: 'datagrid'}" lay-size="sm" lay-filter="TableFilter"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="org_model" class="page_model" style="display:none;">
+    <div class="layui-show">
+        <div class="layui-form layui-form-pane">
+            <form method="post" id="orgForm" style="padding: 5px; line-height: 5px;">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">所属系统<span style="color:red">*</span></label>
+                    <div class="layui-input-block layui-form">
+                        <select id="sel_sys" name="sel_sys">
+
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">上级机构<span style="color:red">*</span></label>
+                    <div class="layui-input-block">
+                        <div class="layui-unselect layui-form-select downpanel">
+                            <div class="layui-select-title"  onclick="openSelectTrees()">
+                                <span class="layui-input layui-unselect" id="treeclass" ></span>
+                                <input type="hidden" name="p_id" id="p_id">
+                                <i class="layui-edge"></i>
+                            </div>
+                            <dl class="layui-anim layui-anim-upbit">
+                                <dd>
+                                    <ul id="classtree"></ul>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">机构名称<span style="color:red">*</span></label>
+                    <div class="layui-input-block">
+                        <input type="text" id="org_name" name="org_name" onmouseout="setFullName()" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">机构全称<span style="color:red">*</span></label>
+                    <div class="layui-input-block">
+                        <input type="text" id="org_full_name" name="org_full_name" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-block">
+                        <textarea id="org_remark" name="org_remark" placeholder="请输入备注" class="layui-textarea" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item page-form-btn" style="display: none">
+                    <button class="layui-btn" id="form_submit_btn" lay-filter="form_submit_btn" lay-submit>确定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+<script th:src="@{/js/layui/layui.js}"></script>
+<script th:src="@{/js/util.js}"></script>
+<script>
+    layui.use(['table','form','jquery','layer','tree'],function () {
+        var table = layui.table;
+        var form = layui.form;
+        var $ = layui.$;
+        var layer = layui.layer;
+        var tree = layui.tree;
+        var tree1 = layui.tree;
+        var p_id =-1;
+        $.ajax({
+            url:'/system/getSystemInfo',
+            dataType:'JSON',
+            type:'get',
+            async:true,
+            success:function (res) {
+                var open = "";
+                $.each(res.data,function (key,val) {
+                    open+= "<option value='"+val.id+"'>"+val.sysName+"</option>";
+                    $("#sel_sys").append("<option value='"+val.id+"'>"+val.sysName+"</option>")
+                });
+                $("#sys_code").append(open);
+                $('#sys_code').get(0).selectedIndex=0;
+                $('#sel_sys').get(0).selectedIndex=0;
+                form.render("select");
+                setTerr($("#sys_code").val());
+                setTable($("#sys_code").val(),-1);
+                setLeftTerr($('#sel_sys').val());
+            }
+        });
+
+
+        /**
+         * 新增
+         */
+        $('.newsAdd_btn').click(function () {
+            render_from();
+            openLayer($,layui.layer, {
+                title: '新增组织机构',     //显示标题
+                area: ['680px', '500px'], //宽高
+                content:  $('#org_model'),
+                success: function(layero, index){
+                    form.render();
+                    //提交
+                    form.on('submit(form_submit_btn)', function(data){
+                        var loading = layer.load(1);
+                        var json = data.field;
+                        $.ajax({
+                            url: "/org/saveOrgInfo",
+                            data:json ,
+                            type: 'POST',
+                            dataType:"JSON",
+                            success: function (res) {
+                                if(res.success) {
+                                    layer.closeAll();
+                                    ref_table($('#sys_code').val(),'',p_id);
+                                    setTerr($('#sys_code').val());
+                                    setLeftTerr($('#sys_code').val());
+                                    layer.msg("机构新增成功", { icon:  6 });
+                                }
+                                else {
+                                    layer.close(loading);
+                                    layer.msg(res.msg, { icon: 5 });
+                                }
+                            },
+                            error: function () {
+                                layer.close(loading);
+                                layer.msg("机构新增失败", { icon: 5 });
+                            }
+                        });
+                        return false;
+                    });
+                }
+            }, '#form_submit_btn');
+        });
+
+        /**
+         * 修改
+         */
+        $('.Edit_btn').click(function () {
+            var checkStatus = table.checkStatus('datagrid');
+            if (checkStatus.data.length != 1) {
+                layer.msg("请选择一条数据。", {icon: 5});
+            }else {
+                render_from();
+                var datas= checkStatus.data[0];
+                set_from(datas);
+                openLayer($,layui.layer, {
+                    title: '修改组织机构',     //显示标题
+                    area: ['680px', '500px'], //宽高
+                    content:  $('#org_model'),
+                    success: function(layero, index){
+                        form.render();
+                        //提交
+                        form.on('submit(form_submit_btn)', function(data){
+                            var loading = layer.load(1);
+                            var json = data.field;
+                            json.id = datas.id;
+                            $.ajax({
+                                url: "/org/upOrgInfo",
+                                data:json ,
+                                type: 'POST',
+                                dataType:"JSON",
+                                success: function (res) {
+                                    if(res.success) {
+                                        layer.closeAll();
+                                        ref_table($('#sys_code').val(),'',p_id);
+                                        setTerr($('#sys_code').val());
+                                        setLeftTerr($('#sys_code').val());
+                                        layer.msg("机构修改成功", { icon:  6 });
+                                    }
+                                    else {
+                                        layer.close(loading);
+                                        layer.msg(res.msg, { icon: 5 });
+                                    }
+                                },
+                                error: function () {
+                                    layer.close(loading);
+                                    layer.msg("机构修改失败", { icon: 5 });
+                                }
+                            });
+                            return false;
+                        });
+                    }
+                }, '#form_submit_btn');
+            }
+        });
+
+        /**
+         * 查询
+         */
+        $('.search_btn').click(function () {
+            var sys_id = $('#sys_code').val();
+            var name = $('#name').val();
+            ref_table(sys_id,name,p_id);
+        });
+
+        /**
+         * 右侧组织树装载
+         * @param sys_id
+         */
+        function setTerr(sys_id) {
+            $('#menuselecttree').html('');
+            $.ajax({
+                url:'/org/getOrgTerr',
+                dataType:'JSON',
+                type:'get',
+                data:{sys_id:sys_id},
+                success:function (res) {
+                    if(res.success){
+                        tree.render({
+                            elem: '#roletree'  //绑定元素
+                            , data: res.data
+                            ,id:"roletree"
+                            ,click:function (node) {
+                                p_id =node.data.id;
+                                setTable(sys_id,node.data.id)
+                            }
+                        });
+                    }else{
+                        layer.msg('获取菜单失败', { icon: 5 });
+                    }
+                }
+            });
+        }
+
+        function setLeftTerr(sys_id) {
+            $('#classtree').html('');
+            $.ajax({
+                url:'/org/getOrgTerr',
+                dataType:'JSON',
+                type:'get',
+                data:{sys_id:sys_id},
+                success:function (res) {
+                    if(res.success){
+                        tree1.render({
+                            elem: '#classtree   '  //绑定元素
+                            , data: res.data
+                            ,click:function (node) {
+                                console.log(node)
+                                $('#p_id').val(node.data.id);
+                                var $select = $($(this)[0].elem).parents(".layui-form-select");
+                                $select.removeClass("layui-form-selected").find(".layui-select-title span").html(node.data.title);
+                                $('#org_full_name').val(node.data.title + '/');
+                            }
+                        });
+                    }else{
+                        layer.msg('获取菜单失败', { icon: 5 });
+                    }
+                }
+            });
+        }
+        /**
+         * 表单装载
+         * @param sys_id
+         * @param p_id
+         */
+        function setTable(sys_id,p_id){
+            table.render({
+                elem: '#datagrid'
+                ,id: 'datagrid'
+                ,url:'/org/getOrgInfoAll'
+                ,method: 'GET'
+                ,height:'500px'
+                ,where:{sys_id:sys_id,p_id:p_id,name:''},
+                cols: [
+                    [
+                        {type:'numbers',title:"序号"},
+                        {type:'radio'},
+                        {field:'codeName', title: '组织名称',align:'left'}
+                        ,{field:'orgFullName', title: '组织机构全称',align:'left'}
+                        ,{field:'orgRemark', title: '备注',align:'left'}
+                    ]
+                ]
+                ,loading:true
+                ,page: true
+                ,done: function(res, curr, count) {
+                    signleSelect($, 'datagrid');
+                }
+            });
+        }
+
+        /**
+         * 表单刷新
+         * @param sys_id
+         * @param name
+         * @param p_id
+         */
+        function ref_table(sys_id,name,p_id) {
+            table.reload('datagrid',{
+                where:{name:name,sys_id:sys_id,p_id:p_id},
+                page:{
+                    curr: 1
+                }
+            })
+        }
+
+        /**
+         * 表单清空
+         */
+        function render_from() {
+            $('#sel_sys').get(0).selectedIndex=0;
+            $('#p_id').val('');
+            $('#org_full_name').val('');
+            $('#treeclass').html('');
+            $('#org_remark').val('');
+            $('#org_name').val('');
+        }
+
+        function set_from(data) {
+            $("#sel_sys").find("option[value='"+data.sysId+"']").attr('selected',true);
+            $('#p_id').val(data.pId);
+            $('#org_full_name').val(data.orgFullName);
+            $('#org_remark').val(data.orgRemark);
+            $('#org_name').val(data.codeName);
+            $.ajax({
+                url:"/org/getOrgByid"
+                ,dataType:'JSON'
+                ,type:"get"
+                ,data:{id :data.pId}
+                ,async:true
+                ,success:function (res) {
+                    $('#treeclass').html(res.data[0].codeName);
+                }
+            });
+        }
+    });
+    function openSelectTrees() {
+        var $ = layui.$;
+        openSelectTree($);
+    }
+    function setFullName() {
+        var $ = layui.$;
+        var treecl = $('#treeclass').text();
+        var orgName = $('#org_name').val();
+        $('#org_full_name').val(treecl+'/'+orgName);
+    }
+</script>
+</html>

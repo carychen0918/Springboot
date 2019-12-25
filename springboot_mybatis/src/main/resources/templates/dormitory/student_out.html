@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<html  xmlns:th="http://www.thymeleaf.org"/>
+<head>
+    <meta charset="UTF-8">
+    <title>学生迁出</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+</head>
+<body>
+<div class="layui-fluid gmdf-layui-fluid">
+    <div class="layui-row gmdf-layui-row">
+        <blockquote class="layui-elem-quote news_search">
+            <div class="layui-inline">
+                <div class="layui-input-inline layui-form">
+                    <select id="sex_sel" name="sex_sel" lay-filter="sex_sel">
+                        <option value="-1">选择寝室类型</option>
+                        <option value="0">女生宿舍</option>
+                        <option value="1">男生宿舍</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" value="" id="name" name="name" placeholder="楼号名称/管理员姓名"
+                           class="layui-input search_input">
+                </div>
+                <a class="layui-btn layui-btn-primary search_btn"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary newsAdd_btn"><i class="layui-icon">&#xe654;</i>新增</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary Edit_btn"><i class="layui-icon">&#xe642;</i>修改</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary"href="javascript:location.replace(location.href);" title="刷新">
+                    <i class="layui-icon" style="line-height:38px">&#xe669;</i></a>
+            </div>
+        </blockquote>
+        <div class="layui-form news_list">
+            <table class="layui-hide" id="datagrid" lay-data="{id: 'datagrid'}" lay-filter="TableFilter"></table>
+        </div>
+    </div>
+</div>
+
+
+<!--addmodel-->
+<div id="role_model" class="page_model" style="display:none;">
+    <div class="layui-show">
+        <div class="layui-form layui-form-pane">
+            <form id="role_form" method="post" style="padding: 5px; line-height: 5px;">
+                <div class="layui-form-item ">
+                    <label  class="layui-form-label" >角色编码<span style="color: red">*</span></label>
+                    <div class="layui-input-block">
+                        <input type="text" id="role_code" name="role_code" required lay-verify="required" autocomplete="off" placeholder="角色编码" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label  class="layui-form-label" >角色名<span style="color: red">*</span></label>
+                    <div class="layui-input-block">
+                        <input type="text" id="role_name" name="role_name" required lay-verify="required" autocomplete="off" placeholder="角色名" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item ">
+                    <label  class="layui-form-label" >所属系统<span style="color: red">*</span></label>
+                    <div class="layui-input-block">
+                        <select id="sys_id" name="sys_id"required lay-verify="required" >
+                            <option value="" ></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label" >角色状态</label>
+                    <div class="layui-input-block">
+                        <select id="role_status" name="role_status">
+                            <option value="1" selected>正常</option>
+                            <option value="0" >禁用</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label  class="layui-form-label" >排序号</label>
+                    <div class="layui-input-block">
+                        <input type="number" id="role_order" name="role_order" autocomplete="off" value="1" class="layui-input" >
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label" >角色备注</label>
+                    <div class="layui-input-block">
+                        <textarea id="role_remark" name="role_remark" placeholder="请输入角色备注" class="layui-textarea" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item page-form-btn" style="display: none">
+                    <button class="layui-btn" id="form_submit_btn" lay-filter="form_submit_btn" lay-submit>确定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script th:src="@{/js/layui/layui.js}"></script>
+<script th:src="@{/js/util.js}"></script>
+<script>
+    layui.use(['table','form','jquery','layer','tree'],function () {
+        var table = layui.table;
+        var form = layui.form;
+        var $ = layui.$;
+        var layer = layui.layer;
+
+    });
+</script>
+</body>
+</html>

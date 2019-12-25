@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>院系班管理</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+</head>
+<body>
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <blockquote class="layui-elem-quote">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" value="" placeholder="院系班名称/主管教师姓名/主管电话" class="layui-input" id="name"
+                           name="name">
+                </div>
+                <div class="layui-input-inline layui-form">
+                    <select name="sup_id" id="sup_id" lay-filter="search_from" lay-search>
+
+                    </select>
+                </div>
+                <div class="layui-input-inline layui-form">
+                    <select name="sup_id1" id="sup_id1" lay-search lay-filter="search_from1">
+
+                    </select>
+                </div>
+                <a class="layui-btn layui-btn-primary search_btn"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary newsAdd_btn"><i class="layui-icon">&#xe654;</i>新增</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary menuEdit_btn"><i class="layui-icon">&#xe642;</i>修改</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary"href="javascript:location.replace(location.href);" title="刷新">
+                    <i class="layui-icon" style="line-height:38px">&#xe669;</i></a>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-form-mid layui-word-aux"></div>
+            </div>
+        </blockquote>
+        <div class="layui-form news_list">
+            <table class="layui-hide" id="datagrid" lay-size="sm" lay-data="{id: 'datagrid'}"
+                   lay-filter="TableFilter"></table>
+        </div>
+    </div>
+</div>
+
+<div id="department_model" class="page_model" style="display:none;">
+    <div class="layui-show">
+        <div class="layui-form layui-form-pane">
+            <form method="post" style="padding: 5px; line-height: 5px;">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">名称<span style="color:red">*</span></label>
+                    <div class="layui-input-block">
+                        <input type="text" id="d_nanem" name="d_nanem" required lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">所属院</label>
+                        <div class="layui-input-inline">
+                            <select name="d_sup_id" id="d_sup_id" lay-filter="sele_form" lay-search>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">所属系</label>
+                        <div class="layui-input-inline">
+                            <select id="d_sup_id1" name="d_sup_id1" lay-search>
+                                <option value="0">请选择系</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">主管姓名<span style="color:red">*</span></label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="d_teacher_name" name="d_teacher_name" required lay-verify="required"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">主管电话<span style="color:red">*</span></label>
+                        <div class="layui-input-block">
+                            <input type="text" id="d_teacher_phone" name="d_teacher_phone" required
+                                   lay-verify="required|phone" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">主管邮箱<span style="color:red">*</span></label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="d_teacher_email" name="d_teacher_email" required
+                                   lay-verify="required|email" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item page-form-btn" style="display: none">
+                    <button class="layui-btn" id="form_submit_btn" lay-filter="form_submit_btn" lay-submit>确定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+
+
+<script th:src="@{/js/layui/layui.js}"></script>
+<script th:src="@{/js/util.js}"></script>
+<script>
+    layui.use(['table', 'form', 'jquery', 'layer', 'tree'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var $ = layui.$;
+        var layer = layui.layer;
+        var search_sup_id = 0;
+        setSelete("sup_id", 0, "请选择院");
+        setSelete("d_sup_id", 0, "请选择院");
+
+        function setSelete(id, sup_id, one) {
+            $.ajax({
+                url: "/department/getDepartmentBySupid",
+                dataType: "JSON",
+                type: 'get',
+                data: {sup_id: sup_id},
+                async:false,
+                success: function (res) {
+                    if (res.success) {
+                        var data = res.data;
+                        $("#" + id).html('');
+                        $("#" + id).append("<option value='0'>" + one + "</option>>");
+                        for (var i in data) {
+                            $("#" + id).append("<option value='" + data[i].d_id + "'>" + data[i].d_nanem + "</option>>");
+                        }
+                        form.render("select");
+                    } else {
+                        layer.msg('获取下拉列表成功', {icon: 5});
+                    }
+                }
+            });
+        }
+
+        form.on('select(search_from)', function (data) {
+            search_sup_id = data.value;
+            setSelete("sup_id1", data.value, "请选择系");
+        });
+        form.on('select(search_from1)', function (data) {
+            var name = $('#name').val();
+            search_sup_id = data.value;
+            search(name, search_sup_id);
+        });
+        form.on('select(sele_form)', function (data) {
+            setSelete("d_sup_id1", data.value, "请选择系");
+        });
+        table.render({
+            elem: '#datagrid'
+            , id: 'datagrid'
+            , url: '/department/getDepartmentAll'
+            , method: 'GET'
+            , where: {sup_id: 0}
+            , cols: [
+                [
+                    {type: 'radio'},
+                    {type: 'numbers', title: "序号"},
+                    {field: 'd_nanem', title: '名称', align: 'left'}
+                    , {field: 'd_teacher_name', title: '主管老师', align: 'left'}
+                    , {field: 'd_teacher_phone', title: '老师电话', align: 'left'}
+                    , {field: 'd_teacher_email', title: '老师邮箱', align: 'left'}
+                ]
+            ]
+            , page: true
+            , done: function (res, curr, count) {
+                signleSelect($, 'datagrid');
+            }
+        });
+
+        $('.search_btn').click(function () {
+            var name = $('#name').val();
+            search(name, search_sup_id);
+        });
+
+        function search(name, sup_id) {
+            table.reload('datagrid', {
+                where: { //设定异步数据接口的额外参数，任意设
+                    name: name,
+                    sup_id: sup_id
+                }
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        }
+
+        /**
+         * 新增
+         */
+        $('.newsAdd_btn').click(function () {
+            render_from();
+            openLayer($, layui.layer, {
+                title: '新增院、系、班',     //显示标题
+                area: ['680px', '350px'], //宽高
+                content: $('#department_model'),
+                success: function (layero, index) {
+                    form.render();
+                    //提交
+                    form.on('submit(form_submit_btn)', function (data) {
+                        var loading = layer.load(1);
+                        var json = data.field;
+                        if(json.d_sup_id1!=0){
+                            json.d_sup_id =json.d_sup_id1;
+                        }
+                        $.ajax({
+                            url: "/department/saveDepartment",
+                            data: json,
+                            type: 'POST',
+                            dataType: "JSON",
+                            success: function (res) {
+                                if (res.success) {
+                                    var name = $('#name').val();
+                                    layer.closeAll();
+                                    search(name, search_sup_id);
+                                    layer.msg("新增成功", {icon: 6});
+                                } else {
+                                    layer.close(loading);
+                                    layer.msg(res.msg, {icon: 5});
+                                }
+                            },
+                            error: function () {
+                                layer.close(loading);
+                                layer.msg("新增失败", {icon: 5});
+                            }
+                        });
+                        return false;
+                    });
+                }
+            }, '#form_submit_btn');
+        });
+
+        /**
+         * 修改
+         */
+        $('.menuEdit_btn').click(function () {
+            var checkStatus = table.checkStatus('datagrid');
+            if (checkStatus.data.length != 1) {
+                layer.msg("请选择一条数据!", {icon: 5});
+            } else {
+                setFrom(checkStatus.data[0]);
+                openLayer($, layui.layer, {
+                    title: '修改院、系、班',     //显示标题
+                    area: ['680px', '350px'], //宽高
+                    content: $('#department_model'),
+                    success: function (layero, index) {
+                        //提交
+                        form.on('submit(form_submit_btn)', function (data) {
+                            var loading = layer.load(1);
+                            var json = data.field;
+                            json.d_id = checkStatus.data[0].d_id;
+                            if(json.d_sup_id1!=0){
+                                json.d_sup_id =json.d_sup_id1;
+                            }
+                            $.ajax({
+                                url: "/department/upDepartment",
+                                data: json,
+                                type: 'POST',
+                                dataType: "JSON",
+                                success: function (res) {
+                                    if (res.success) {
+                                        var name = $('#name').val();
+                                        layer.closeAll();
+                                        search(name, search_sup_id);
+                                        layer.msg("修改成功", {icon: 6});
+                                    } else {
+                                        layer.close(loading);
+                                        layer.msg(res.msg, {icon: 5});
+                                    }
+                                },
+                                error: function () {
+                                    layer.close(loading);
+                                    layer.msg("修改失败", {icon: 5});
+                                }
+                            });
+                            return false;
+                        });
+                    }
+                }, '#form_submit_btn');
+            }
+        });
+
+        function render_from() {
+            $('#d_nanem').val('');
+            $('#d_teacher_name').val('');
+            $('#d_teacher_phone').val('');
+            $('#d_teacher_email').val('');
+            $('#d_sup_id1').html('');
+            setSelete("d_sup_id", 0, "请选择院");
+        }
+
+        function setFrom(data) {
+            render_from();
+            $('#d_nanem').val(data.d_nanem);
+            $('#d_teacher_name').val(data.d_teacher_name);
+            $('#d_teacher_phone').val(data.d_teacher_phone);
+            $('#d_teacher_email').val(data.d_teacher_email);
+            if(data.d_sup_id==0){
+                $("#d_sup_id").find("option[value='"+0+"']").attr('selected',true);
+                form.render("select");
+            }else{
+                $.ajax({
+                    url: "/department/getFatherDid",
+                    dataType: "JSON",
+                    type: 'get',
+                    data: {sup_id: data.d_sup_id},
+                    async:false,
+                    success: function (res) {
+                        if (res.success) {
+                            var data = res.data;
+                            if(data.d_sup_id==0){
+                                $("#d_sup_id").find("option[value='"+data.d_id+"']").attr('selected',true);
+                                form.render("select");
+                            }else{
+                                $("#d_sup_id").find("option[value='"+data.d_sup_id+"']").attr('selected',true);
+                                setSelete("d_sup_id1",data.d_sup_id,"请选择系");
+                                $("#d_sup_id1").find("option[value='"+data.d_id+"']").attr('selected',true);
+                                form.render("select");
+                            }
+                        } else {
+                            layer.msg(res.msg, {icon: 5});
+                        }
+                    }
+                });
+            }
+        }
+
+    });
+</script>
+
+</html>

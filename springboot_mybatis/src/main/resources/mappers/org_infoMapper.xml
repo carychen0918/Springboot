@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carychen.springboot_mybatis.demo.dao.org_infoMapper">
+  <resultMap id="OrgInfoMap" type="com.carychen.springboot_mybatis.demo.entity.org_info">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="code_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="p_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="sys_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="org_full_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="org_remark" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <sql id="OrgInfoList">
+    id, code_name, p_id, sys_id, org_full_name, org_remark
+  </sql>
+  <select id="getOrgInfoById" parameterType="java.lang.Integer" resultMap="OrgInfoMap">
+    select 
+    <include refid="OrgInfoList" />
+    from org_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="saveOrgInfo" parameterType="com.carychen.springboot_mybatis.demo.entity.org_info">
+    insert into org_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="codeName != null">
+        code_name,
+      </if>
+      <if test="pId != null">
+        p_id,
+      </if>
+      <if test="sysId != null">
+        sys_id,
+      </if>
+      <if test="orgFullName != null">
+        org_full_name,
+      </if>
+      <if test="orgRemark != null">
+        org_remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="codeName != null">
+        #{codeName,jdbcType=VARCHAR},
+      </if>
+      <if test="pId != null">
+        #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="sysId != null">
+        #{sysId,jdbcType=INTEGER},
+      </if>
+      <if test="orgFullName != null">
+        #{orgFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgRemark != null">
+        #{orgRemark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="upOrgInfo" parameterType="com.carychen.springboot_mybatis.demo.entity.org_info">
+    update org_info
+    <set>
+      <if test="codeName != null">
+        code_name = #{codeName,jdbcType=VARCHAR},
+      </if>
+      <if test="pId != null">
+        p_id = #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="sysId != null">
+        sys_id = #{sysId,jdbcType=INTEGER},
+      </if>
+      <if test="orgFullName != null">
+        org_full_name = #{orgFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgRemark != null">
+        org_remark = #{orgRemark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getOrgIngfoBySysid" resultMap="OrgInfoMap">
+        select <include refid="OrgInfoList"/>
+        from org_info
+        where 1=1 and sys_id = #{sys_id}
+  </select>
+  <select id="getOrgInfoAll" resultMap="OrgInfoMap">
+    select <include refid="OrgInfoList"/>
+    from org_info
+    where 1=1
+    <if test="sys_id!=null and sys_id!=0">
+        and sys_id=#{sys_id}
+    </if>
+    <if test="name!=null and name!=''">
+        and code_name like '%${name}%'
+    </if>
+    <if test="p_id!=null and p_id !=-1">
+        and p_id=#{p_id}
+    </if>
+    limit #{page},#{limit}
+  </select>
+  <select id="getCountOrg" resultType="java.lang.Integer">
+    select count(0) as tabl
+    from org_info
+    where 1=1
+    <if test="sys_id!=null and sys_id!=0">
+      and sys_id=#{sys_id}
+    </if>
+    <if test="name!=null and name!=''">
+      and code_name like '%${name}%'
+    </if>
+    <if test="p_id!=null and p_id !=-1">
+      and p_id=#{p_id}
+    </if>
+  </select>
+</mapper>

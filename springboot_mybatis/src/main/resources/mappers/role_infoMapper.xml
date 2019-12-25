@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carychen.springboot_mybatis.demo.dao.role_infoMapper">
+  <resultMap id="RoleInfoMap" type="com.carychen.springboot_mybatis.demo.entity.role_info">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="role_code" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="role_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="role_state" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="sys_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="role_order" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="role_remark" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <sql id="Role_List">
+    id, role_code, role_name, role_state, sys_id, role_order, role_remark
+  </sql>
+  <select id="getRoleInfoByid" parameterType="java.lang.Integer" resultMap="RoleInfoMap">
+    select 
+    <include refid="Role_List" />
+    from role_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getRoleAll" resultMap="RoleInfoMap">
+        select
+        <include refid="Role_List"/>
+        from role_info
+        where 1=1
+        <if test="sys_id !=null and sys_id!=0">
+           and sys_id=#{sys_id}
+        </if>
+        <if test="name!=null and name!=''">
+            and (role_code like '%${name}%' or role_name like '%${name}%')
+        </if>
+        order by role_order desc 
+        limit #{page},#{limit}
+
+  </select>
+  <select id="getCountRole" resultType="java.lang.Integer">
+     select count(0) tabl from role_info
+     where 1=1
+    <if test="sys_id !=null and sys_id!=0">
+      and sys_id=#{sys_id}
+    </if>
+    <if test="name!=null and name!=''">
+      and (role_code like '%${name}%' or role_name like '%${name}%')
+    </if>
+  </select>
+  <delete id="delRoleInfoByid" parameterType="java.lang.Integer">
+    delete from role_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="saveRoleInfo" parameterType="com.carychen.springboot_mybatis.demo.entity.role_info">
+    insert into role_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="roleCode != null">
+        role_code,
+      </if>
+      <if test="roleName != null">
+        role_name,
+      </if>
+      <if test="roleState != null">
+        role_state,
+      </if>
+      <if test="sysId != null">
+        sys_id,
+      </if>
+      <if test="roleOrder != null">
+        role_order,
+      </if>
+      <if test="roleRemark != null">
+        role_remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="roleCode != null">
+        #{roleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleState != null">
+        #{roleState,jdbcType=INTEGER},
+      </if>
+      <if test="sysId != null">
+        #{sysId,jdbcType=INTEGER},
+      </if>
+      <if test="roleOrder != null">
+        #{roleOrder,jdbcType=INTEGER},
+      </if>
+      <if test="roleRemark != null">
+        #{roleRemark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="upRoleInfo" parameterType="com.carychen.springboot_mybatis.demo.entity.role_info">
+    update role_info
+    <set>
+      <if test="roleCode != null">
+        role_code = #{roleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleState != null">
+        role_state = #{roleState,jdbcType=INTEGER},
+      </if>
+      <if test="sysId != null">
+        sys_id = #{sysId,jdbcType=INTEGER},
+      </if>
+      <if test="roleOrder != null">
+        role_order = #{roleOrder,jdbcType=INTEGER},
+      </if>
+      <if test="roleRemark != null">
+        role_remark = #{roleRemark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getRoleBySysid" resultMap="RoleInfoMap" parameterType="java.lang.Integer">
+        select <include refid="Role_List"/>
+        from role_info where 1=1
+        and sys_id = #{sys_id}
+  </select>
+</mapper>

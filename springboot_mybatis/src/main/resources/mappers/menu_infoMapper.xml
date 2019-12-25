@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carychen.springboot_mybatis.demo.dao.menu_infoMapper">
+    <resultMap id="MenuMap" type="com.carychen.springboot_mybatis.demo.entity.menu_info">
+        <constructor>
+            <idArg column="menu_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="menu_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="menu_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="menu_nav" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="menu_remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="menu_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="menu_level" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="menu_order" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="menu_status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="menu_pid" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="menu_hidden" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="menu_target" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="menu_sysid" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+    <sql id="Menu_List">
+    menu_id, menu_code, menu_name, menu_nav, menu_remark, menu_url, menu_level, menu_order, 
+    menu_status, menu_pid, menu_hidden, menu_target,menu_sysid
+  </sql>
+    <select id="getMenuByid" parameterType="java.lang.Integer" resultMap="MenuMap">
+        select
+        <include refid="Menu_List"/>
+        from menu_info
+        where menu_id = #{menuId,jdbcType=INTEGER}
+    </select>
+    <delete id="delMenuByid" parameterType="java.lang.Integer">
+    delete from menu_info
+    where menu_id = #{menuId,jdbcType=INTEGER}
+  </delete>
+    <insert id="saveMenu" parameterType="com.carychen.springboot_mybatis.demo.entity.menu_info">
+        insert into menu_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuId != null">
+                menu_id,
+            </if>
+            <if test="menuCode != null">
+                menu_code,
+            </if>
+            <if test="menuName != null">
+                menu_name,
+            </if>
+            <if test="menuNav != null">
+                menu_nav,
+            </if>
+            <if test="menuRemark != null">
+                menu_remark,
+            </if>
+            <if test="menuUrl != null">
+                menu_url,
+            </if>
+            <if test="menuLevel != null">
+                menu_level,
+            </if>
+            <if test="menuOrder != null">
+                menu_order,
+            </if>
+            <if test="menuStatus != null">
+                menu_status,
+            </if>
+            <if test="menuPid != null">
+                menu_pid,
+            </if>
+            <if test="menuHidden != null">
+                menu_hidden,
+            </if>
+            <if test="menuTarget != null">
+                menu_target,
+            </if>
+            <if test="menuSysid != null">
+                menu_sysid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="menuId != null">
+                #{menuId,jdbcType=INTEGER},
+            </if>
+            <if test="menuCode != null">
+                #{menuCode,jdbcType=VARCHAR},
+            </if>
+            <if test="menuName != null">
+                #{menuName,jdbcType=VARCHAR},
+            </if>
+            <if test="menuNav != null">
+                #{menuNav,jdbcType=VARCHAR},
+            </if>
+            <if test="menuRemark != null">
+                #{menuRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="menuUrl != null">
+                #{menuUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="menuLevel != null">
+                #{menuLevel,jdbcType=INTEGER},
+            </if>
+            <if test="menuOrder != null">
+                #{menuOrder,jdbcType=INTEGER},
+            </if>
+            <if test="menuStatus != null">
+                #{menuStatus,jdbcType=INTEGER},
+            </if>
+            <if test="menuPid != null">
+                #{menuPid,jdbcType=INTEGER},
+            </if>
+            <if test="menuHidden != null">
+                #{menuHidden,jdbcType=INTEGER},
+            </if>
+            <if test="menuTarget != null">
+                #{menuTarget,jdbcType=VARCHAR},
+            </if>
+            <if test="menuSysid != null">
+                #{menuSysid,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="upMenuByid" parameterType="com.carychen.springboot_mybatis.demo.entity.menu_info">
+        update menu_info
+        <set>
+            <if test="menuCode != null">
+                menu_code = #{menuCode,jdbcType=VARCHAR},
+            </if>
+            <if test="menuName != null">
+                menu_name = #{menuName,jdbcType=VARCHAR},
+            </if>
+            <if test="menuNav != null">
+                menu_nav = #{menuNav,jdbcType=VARCHAR},
+            </if>
+            <if test="menuRemark != null">
+                menu_remark = #{menuRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="menuUrl != null">
+                menu_url = #{menuUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="menuLevel != null">
+                menu_level = #{menuLevel,jdbcType=INTEGER},
+            </if>
+            <if test="menuOrder != null">
+                menu_order = #{menuOrder,jdbcType=INTEGER},
+            </if>
+            <if test="menuStatus != null">
+                menu_status = #{menuStatus,jdbcType=INTEGER},
+            </if>
+            <if test="menuPid != null">
+                menu_pid = #{menuPid,jdbcType=INTEGER},
+            </if>
+            <if test="menuHidden != null">
+                menu_hidden = #{menuHidden,jdbcType=INTEGER},
+            </if>
+            <if test="menuTarget != null">
+                menu_target = #{menuTarget,jdbcType=VARCHAR},
+            </if>
+            <if test="menuSysid != null">
+                menu_sysid = #{menuSysid,jdbcType=INTEGER},
+            </if>
+        </set>
+        where menu_id = #{menuId,jdbcType=INTEGER}
+    </update>
+    <select id="getMenuInfoAll" resultMap="MenuMap">
+        select
+        <include refid="Menu_List"/>
+        from menu_info where 1=1
+        <if test="name!=null and name!=0">
+            and (menu_code like '%${name}%' or menu_name like '%${name}%')
+        </if>
+        <if test="sys_id!=null and sys_id!=''">
+            and menu_sysid=#{sys_id}
+        </if>
+        order by menu_order asc
+        limit #{page},#{limit}
+    </select>
+    <select id="countMent" resultType="java.lang.Integer">
+        select count(0) tabl from menu_info
+        where 1=1
+        <if test="name!=null and name!=''">
+            and (menu_code like '%${name}%' or menu_name like '%${name}%')
+        </if>
+        <if test="sys_id!=null and sys_id !=0">
+            and menu_sysid=#{sys_id}
+        </if>
+    </select>
+    <select id="getTerr" resultMap="MenuMap">
+        select * from menu_info
+        where 1=1
+        <if test="sys_id !=null and sys_id!=0">
+            and menu_sysid=#{sys_id}
+        </if>
+    </select>
+    <select id="getTerrByUserSysId" resultMap="MenuMap">
+    select m.* from  (
+    select * from menu_info where menu_id in(select menu_id from role_menu_info where role_id = #{user_role_id} and menu_hidden=1) )a
+    LEFT JOIN menu_info m on m.menu_id = a.menu_id or m.menu_id = a.menu_pid GROUP BY m.menu_id
+  </select>
+
+    <select id="getSupMenuByPid" resultType="com.carychen.springboot_mybatis.demo.entity.menu_info">
+    select * from menu_info where 1=1
+    and menu_pid=#{p_id}
+  </select>
+</mapper>

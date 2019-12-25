@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>寝室管理</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+</head>
+<body>
+<div class="layui-fluid gmdf-layui-fluid">
+    <div class="layui-row gmdf-layui-row">
+        <blockquote class="layui-elem-quote news_search">
+            <div class="layui-inline">
+                <div class="layui-input-inline layui-form">
+                    <select id="sex_sel" name="sex_sel" lay-filter="sex_sel">
+                        <option value="-1">选择寝室类型</option>
+                        <option value="0">女生宿舍</option>
+                        <option value="1">男生宿舍</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" value="" id="name" name="name" placeholder="楼号名称/管理员姓名"
+                           class="layui-input search_input">
+                </div>
+                <a class="layui-btn layui-btn-primary search_btn"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary newsAdd_btn"><i class="layui-icon">&#xe654;</i>新增</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary Edit_btn"><i class="layui-icon">&#xe642;</i>修改</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary"href="javascript:location.replace(location.href);" title="刷新">
+                    <i class="layui-icon" style="line-height:38px">&#xe669;</i></a>
+            </div>
+        </blockquote>
+        <div class="layui-form news_list">
+            <table class="layui-hide" id="datagrid" lay-data="{id: 'datagrid'}" lay-filter="TableFilter"></table>
+        </div>
+    </div>
+</div>
+<div id="dormitory_model" class="page_model" style="display:none;">
+    <div class="layui-show">
+        <div class="layui-form layui-form-pane">
+            <form method="post" style="padding: 5px; line-height: 5px;">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">宿舍号：<span style="color:red">*</span></label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="d_number" name="d_number" required lay-verify="required"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">所属楼层<span style="color:red">*</span></label>
+                        <div class="layui-input-inline">
+                            <select name="f_id" id="f_id" required lay-verify="required">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">最大入住人数<span style="color:red">*</span></label>
+                        <div class="layui-input-inline">
+                            <input type="number" id="max_number" name="max_number" autocomplete="off" class="layui-input"
+                                   required lay-verify="required|fnumber">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item page-form-btn" style="display: none">
+                    <button class="layui-btn" id="form_submit_btn" lay-filter="form_submit_btn" lay-submit>确定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/layui/layui.js}"></script>
+<script th:src="@{/js/util.js}"></script>
+<script>
+    layui.use(['table', 'form', 'jquery', 'layer', 'tree'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var $ = layui.$;
+        var layer = layui.layer;
+        table.render({
+            elem: '#datagrid'
+            , id: 'datagrid'
+            , url: '/dormitory/getDormitoryAll'
+            , method: 'GET'
+            , where: {f_sex: -1}
+            , cols: [
+                [
+                    {type: 'radio'},
+                    {type: 'numbers', title: "序号"},
+                    {field: 'd_number', title: '宿舍号', align: 'left'}
+                    , {
+                    field: 'f_id', title: '所属楼层', align: 'left', templet: function (d) {
+                        return "<span>" + d.floorInfo.f_name + "</span>";
+                    }
+                }
+                    , {
+                    field: 'u_name', title: '宿舍管理员', align: 'left', templet: function (d) {
+                        var user = d.floorInfo.userInfo;
+                        console.log(JSON.stringify(user))
+                        return "<span>"+user.userName+"</span>"
+                    }
+                }
+                    , {field: 'current_number', title: '当前入住人数', align: 'left'}
+                    , {field: 'max_number', title: '最大入住人数', align: 'left'}
+                ]
+            ]
+            , page: true
+            , done: function (res, curr, count) {
+                signleSelect($, 'datagrid');
+            }
+        });
+
+        $.ajax({
+            url:"/dormitory/getFloor",
+            dataType:"JSON",
+            type:"get",
+            success:function (res) {
+                if(res.success){
+                    $('#f_id').append("<option>请选择楼层</option>");
+                    $.each(res.data,function (key,val) {
+                        $('#f_id').append("<option value='"+val.f_id+"'>"+val.f_name+"</option>");
+                    });
+                    form.render('select');
+                }
+            }
+        });
+
+        /**
+         * 查看
+         */
+        $('.search_btn').click(function () {
+            setTable();
+        });
+
+        /**
+         * 新增
+         */
+        $('.newsAdd_btn').click(function () {
+            renderForm();
+            openLayer($,layui.layer, {
+                title: '新增宿舍',     //显示标题
+                area: ['680px', '250px'], //宽高
+                content: $('#dormitory_model'),
+                success: function (layero, index) {
+                    form.on('submit(form_submit_btn)', function(data){
+                        var json = data.field;
+                        var loading = layer.load(1);
+                        $.ajax({
+                            url: "/dormitory/saveDormitory",
+                            data:json ,
+                            type: 'POST',
+                            dataType:"JSON",
+                            success: function (res) {
+                                if(res.success) {
+                                    layer.closeAll();
+                                    setTable();
+                                    layer.msg("新增成功", { icon:  6 });
+                                }
+                                else {
+                                    layer.close(loading);
+                                    layer.msg(res.msg, { icon: 5 });
+                                }
+                            }
+                        });
+                        return false;
+                    });
+                }
+            }, '#form_submit_btn');
+        });
+        /**
+         * 修改
+         */
+        $('.Edit_btn').click(function () {
+            renderForm();
+            var checkStatus = table.checkStatus('datagrid');
+            if(checkStatus.data.length!=1){
+                layer.msg("请选择一条记录");
+            }else{
+                setForm(checkStatus.data[0]);
+                openLayer($,layui.layer, {
+                    title: '修改宿舍信息',     //显示标题
+                    area: ['680px', '250px'], //宽高
+                    content: $('#dormitory_model'),
+                    success: function (layero, index) {
+                        form.on('submit(form_submit_btn)', function(data){
+                            var json = data.field;
+                            json.d_id = checkStatus.data[0].d_id;
+                            var loading = layer.load(1);
+                            $.ajax({
+                                url: "/dormitory/upDormitory",
+                                data:json ,
+                                type: 'POST',
+                                dataType:"JSON",
+                                success: function (res) {
+                                    if(res.success) {
+                                        layer.closeAll();
+                                        setTable();
+                                        layer.msg("修改成功", { icon:  6 });
+                                    }
+                                    else {
+                                        layer.close(loading);
+                                        layer.msg(res.msg, { icon: 5 });
+                                    }
+                                }
+                            });
+                            return false;
+                        });
+                    }
+                }, '#form_submit_btn');
+            }
+        });
+
+        form.verify({
+            fnumber: function (value, item) {
+                if (value > 9||value<4) {
+                    return '每个宿舍入住人数应在4~9人之间';
+                }
+            }
+        });
+
+        function setTable() {
+            var name = $('#name').val();
+            var sex = $('#sex_sel').val();
+            table.reload('datagrid',{
+                where:{name:name,f_sex:sex},
+                page:{
+                    curr: 1
+                }
+            })
+        }
+
+        function renderForm() {
+            $('#d_number').val('');
+            $('#f_id').selectedIndex =0;
+            $('#max_number').val("");
+            form.render("select");
+        }
+        function setForm(data) {
+            $('#d_number').val(data.d_number);
+            $('#f_id').find("option[value='"+data.f_id+"']").attr("selected",true);
+            form.render("select");
+            $('#max_number').val(data.max_number);
+        }
+    });
+</script>
+</body>
+</html>
