@@ -13,12 +13,16 @@ public class student_out {
 
     private String out_reason;
 
-    public student_out(Integer o_id, Integer s_id, String out_time, Integer u_id, String add_time) {
-        this.o_id = o_id;
+    private Student_info student_info;
+
+    private user_info user_info;
+
+    public student_out(Integer s_id, String out_time, Integer u_id, String add_time,String out_reason) {
         this.s_id = s_id;
         this.out_time = out_time;
         this.u_id = u_id;
         this.add_time = add_time;
+        this.out_reason = out_reason;
     }
 
     public student_out(Integer o_id, Integer s_id, String out_time, Integer u_id, String add_time, String out_reason) {
@@ -32,6 +36,22 @@ public class student_out {
 
     public student_out() {
         super();
+    }
+
+    public Student_info getStudent_info() {
+        return student_info;
+    }
+
+    public void setStudent_info(Student_info student_info) {
+        this.student_info = student_info;
+    }
+
+    public com.carychen.springboot_mybatis.demo.entity.user_info getUser_info() {
+        return user_info;
+    }
+
+    public void setUser_info(com.carychen.springboot_mybatis.demo.entity.user_info user_info) {
+        this.user_info = user_info;
     }
 
     public Integer getO_id() {

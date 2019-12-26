@@ -1,5 +1,6 @@
 package com.carychen.springboot_mybatis.demo.dao;
 
+import com.carychen.springboot_mybatis.demo.entity.Student_info;
 import com.carychen.springboot_mybatis.demo.entity.student_out;
 
 import java.util.List;
@@ -20,4 +21,8 @@ public interface student_outMapper {
     List<student_out> getStudentOutAll(String name,String out_time,String out_time1,String d_number,int c_id,int page,int limit);
 
     int getCountStuout(String name,String out_time,String out_time1,String d_number,int c_id);
+
+    List<Student_info> getStudentAlltoOut(String name, int d_id, int c_id);
+
+    String getDepartmentByPid(int sup_id);
 }

@@ -97,11 +97,11 @@
             d_sup_id=#{c_id} or d_id=#{c_id} GROUP BY d_id))
         </if>
         <if test="out_time!=null and out_time !=''">
-            and DATE_FORMAT(out_time,'%Y-%m-%d %H:%i:%s') > date_format(#{out_time},'%Y-%m-%d %H:%i:%s')
-            and DATE_FORMAT(out_time,'%Y-%m-%d %H:%i:%s') &lt; date_format(#{out_time1},'%Y-%m-%d %H:%i:%s')
+            and DATE_FORMAT(out_time,'%Y-%m-%d') > date_format(#{out_time},'%Y-%m-%d')
+            and DATE_FORMAT(out_time,'%Y-%m-%d') &lt; date_format(#{out_time1},'%Y-%m-%d')
         </if>
         <if test="d_number !=null and d_number!=''">
-            and d.d_number like '%${d_number}%'
+            and (d.d_number like '%${d_number}%' or s.s_name like '%${d_number}%')
         </if>
         order by o.out_time DESC
         limit #{page},#{limit}
@@ -122,11 +122,11 @@
             d_sup_id=#{c_id} or d_id=#{c_id} GROUP BY d_id))
         </if>
         <if test="out_time!=null and out_time !=''">
-            and DATE_FORMAT(out_time,'%Y-%m-%d %H:%i:%s') > date_format(#{out_time},'%Y-%m-%d %H:%i:%s')
-            and DATE_FORMAT(out_time,'%Y-%m-%d %H:%i:%s') &lt; date_format(#{out_time1},'%Y-%m-%d %H:%i:%s')
+            and DATE_FORMAT(out_time,'%Y-%m-%d') > date_format(#{out_time},'%Y-%m-%d')
+            and DATE_FORMAT(out_time,'%Y-%m-%d') &lt; date_format(#{out_time1},'%Y-%m-%d')
         </if>
         <if test="d_number !=null and d_number!=''">
-            and d.d_number like '%${d_number}%'
+            and (d.d_number like '%${d_number}%' or s.s_name like '%${d_number}%')
         </if>
     </select>
 
@@ -141,16 +141,16 @@
     where o_id = #{o_id,jdbcType=INTEGER}
   </delete>
     <insert id="saveStudentOut" parameterType="com.carychen.springboot_mybatis.demo.entity.student_out">
-        insert into student_out(out_time,u_id,add_time,out_reason) values
+        insert into student_out(s_id,out_time,u_id,add_time,out_reason) values
         <foreach collection="list" item="student_out" separator=",">
-            (#{student_out.out_time},#{student_out.u_id},#{student_out.add_time},#{student_out.out_reason})
+            (#{student_out.s_id},#{student_out.out_time},#{student_out.u_id},#{student_out.add_time},#{student_out.out_reason})
         </foreach>
     </insert>
     <update id="upStudentoutByidlist" parameterType="java.lang.Integer">
-        update from student_info set s_state=1 where
-        <trim prefix="s_state in (" suffix=")" suffixOverrides=",">
+        update  student_info set s_state=1 where
+        <trim prefix="s_id in (" suffix=")" suffixOverrides=",">
             <foreach collection="list" item="i" separator=",">
-                #{i},
+                #{i}
             </foreach>
         </trim>
     </update>
@@ -177,8 +177,32 @@
     </update>
     <update id="upDormitoryByid" parameterType="java.lang.Integer">
          UPDATE dormitory_info
-        SET current_number = (current_number - #{index} )
+        SET current_number = (current_number - 1 )
         WHERE
        d_id = #{d_id}
     </update>
+    <select id="getStudentAlltoOut" resultMap="com.carychen.springboot_mybatis.demo.dao.Student_infoMapper.studentMap">
+        select *
+          from Student_info s left join dormitory_info d on s.d_id = d.d_id inner join floor_info f on d.f_id =f.f_id
+        left join department_info e on s.c_id =e.d_id
+        where 1=1 and s.s_state=0
+        <if test="name !=null and name !=''">
+            and (s.s_name like '%${name}%' or s.s_id_number like '%${name}%')
+        </if>
+        <if test="d_id !=-1">
+            and s.d_id =#{d_id}
+        </if>
+        <if test="c_id != -1">
+            and s.c_id = #{c_id}
+        </if>
+    </select>
+    <select id="getDepartmentByPid" resultType="java.lang.String">
+        SELECT
+        CONCAT(b.d_nanem,'/',	a.d_nanem,'/')
+        FROM
+            department_info a
+            LEFT JOIN department_info b ON b.d_id = a.d_sup_id
+        WHERE
+            a.d_id = #{sup_id}
+    </select>
 </mapper>
