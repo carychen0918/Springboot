@@ -115,16 +115,17 @@ public class StudentOutController {
     public @ResponseBody Object getDepartmentByPid(int sup_id){
         retMap map = new retMap();
         String msg = "获取院系详情成功";
+        Boolean suec = true;
         try {
             String dep = studentOutSservice.getDepartmentByPid(sup_id);
             map.setData(dep);
         } catch (Exception e) {
             System.err.println("获取院系详情失败：" + e.toString());
             msg = "获取院系详情失败：" + e.toString();
-            map.setCode(2000);
-            map.setCount(0);
             map.setData(null);
+            suec =false;
         }
+        map.setSuccess(suec);
         map.setMsg(msg);
         return map.getMap();
     }
