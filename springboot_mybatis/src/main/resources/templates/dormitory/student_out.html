@@ -381,6 +381,9 @@
             ,range: '到'
             ,trigger: 'click'
         });
+        /**
+         *迁出
+         */
         $('.newsAdd_btn').click(function () {
             table.render({
                 elem: '#out_stu'
@@ -474,9 +477,18 @@
                 }
             }, '#form_submit_btn');
         });
-
+        /**
+         *迁出时的内部查询
+         */
         $('.search_btn_').click(function () {
             setTable();
+        });
+
+        /**
+         *主查询
+         */
+        $('.search_btn').click(function () {
+            setOutStuTable();
         });
 
         $('.show_tim').click(function () {
@@ -497,7 +509,7 @@
                             var str = res.data;
                             setDetails(Stu,departmentInfo,dormitoryInfo,str,out,user);
                             openLayer($, layui.layer, {
-                                title: Stu.s_name+'迁出',     //显示标题
+                                title: Stu.s_name+'迁出详情',     //显示标题
                                 area: ['880px', '550px'], //宽高
                                 content: $('#out_details'),
                                 btn:['关闭'],
@@ -580,7 +592,7 @@
             $('#s_urgent_phone').val(stu.s_urgent_phone);
             $('#dor_name').val(dormit.floorInfo.f_name+"-"+dormit.d_name);
             $('#out_time2').val(out.out_time);
-            $('#user_name').val(user.user_name);
+            $('#user_name').val(user.userName);
             $('#add_time').val(out.add_time);
             $('#price_max').val(out.out_reason);
         }

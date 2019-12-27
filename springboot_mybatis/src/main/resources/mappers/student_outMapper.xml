@@ -81,9 +81,7 @@
     out_reason
   </sql>
     <select id="getStudentOutAll" resultMap="student_out_map">
-        select o.*,s.*,d.*,f.*,e.*,u.id,u.user_name userName, u.user_login userLogin, u.login_password loginPassword,
-        u.user_status userStatus, u.user_org userOrg, u.user_phone userPhone, u.user_remark userRemark,
-        u.user_sex userSex, u.user_email userEmail , u.user_sys userSys, u.role_id roleId, u.user_on userOn
+        select o.*,s.*,d.*,f.*,e.*,u.*
         from student_out o inner join Student_info s on o.s_id=s.s_id
         left join dormitory_info d on s.d_id = d.d_id inner join floor_info f on d.f_id =f.f_id
         left join department_info e on s.c_id =e.d_id
