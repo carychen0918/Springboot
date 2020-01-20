@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"/>
+<head>
+    <meta charset="UTF-8">
+    <title>签到页</title>
+    <link rel="stylesheet" th:href="@{/js/layui/css/layui.css}">
+</head>
+<body>
+<div class="layui-fluid gmdf-layui-fluid">
+    <div class="layui-row gmdf-layui-row">
+        <blockquote class="layui-elem-quote news_search">
+            <div class="layui-inline layui-form">
+                <div class="layui-input-inline">
+                    <input type="text" id="name" name="name" placeholder="楼层号/宿舍号"
+                           class="layui-input search_input">
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text"id="time" name="time" placeholder="时间范围"
+                           class="layui-input">
+                </div>
+                <div class="layui-input-inline">
+                    <select id="fid" name="fid"  lay-filter="fid" lay-search></select>
+                </div>
+                <div class="layui-input-inline">
+                    <select id="did" name="did" lay-search></select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary search_btn"><i class="layui-icon">&#xe615;</i>查询</a>
+                <a class="layui-btn layui-btn-primary newsAdd_btn"><i class="layui-icon">&#xe609;</i>查寝录入</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary up_check"><i class="layui-icon">&#xe60a;</i>修改</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-primary" href="javascript:location.replace(location.href);" title="刷新">
+                    <i class="layui-icon" style="line-height:38px" >&#xe669;</i></a>
+            </div>
+        </blockquote>
+        <div class="layui-form news_list">
+            <table class="layui-hide" id="datagrid" lay-data="{id: 'datagrid'}" lay-filter="TableFilter"></table>
+        </div>
+    </div>
+</div>
+<!--addmodel-->
+<div id="check_model" class="page_model" style="display:none;">
+    <div class="layui-show">
+        <div class="layui-form layui-form-pane">
+            <form id="role_form" method="post" style="padding: 5px; line-height: 5px;">
+                <div class="layui-inline-item">
+                    <label class="layui-form-label"><span style="color:red">*</span>宿舍：</label>
+                    <div class="layui-input-inline layui-form">
+                        <select name="l" id="l" lay-filter="l" lay-search>
+                        </select>
+                    </div>
+                    <div class="layui-input-inline layui-form">
+                        <select name="d_id" id="d_id" lay-search lay-filter="d_id" lay-verify="required" required>
+                        </select>
+                    </div><i class="layui-icon" style="color: red;font-size: 20px" id="ts" onmouseover="showTX()">&#xe702;</i>
+                    <div id="hide_"></div>
+                </div>
+                <div class="layui-inline-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span style="color:red">*</span>应到人数：</label>
+                        <div class="layui-input-inline layui-form">
+                            <input type="text" name="true_to" id="true_to" class="layui-input" disabled="disabled" lay-verify="required" required>
+                        </div>
+                        <i class="layui-icon" style="color: red;font-size: 20px" id="tx" onmouseover="showTXs()">&#xe702;</i>
+                    </div>
+                </div>
+                <div  class="layui-inline-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><span style="color:red">*</span>是否全勤：</label>
+                        <div class="layui-input-inline layui-form">
+                            <input type="checkbox" name="c_state" id="c_state" lay-skin="switch" lay-filter="c_state" lay-text="是|否" checked>
+                        </div>
+                        <span style="color:red;margin-left: 15px;margin-top: 10px">在选择寝室后才能调节</span>
+                    </div>
+                </div>
+                <div id="missing_show" style="display: none">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">缺寝：</label>
+                            <div class="layui-input-block" id="missing_check">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">缺勤原因：</label>
+                        <div class="layui-input-block">
+                        <textarea id="reason" name="reason" placeholder="请输入迁出原因"  class="layui-textarea" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item page-form-btn" style="display: none">
+                    <button class="layui-btn" id="form_submit_btn" lay-filter="form_submit_btn" lay-submit>确定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script th:src="@{/js/layui/layui.js}"></script>
+<script th:src="@{/js/util.js}"></script>
+
+<script>
+    var mising_list = new Array();//缺到
+    var actual_list = new Array();//实到
+    var All_list = new Array();//所有人员id，用于全到
+    var c_state = 0;
+    layui.use(['table', 'form', 'jquery', 'layer', 'tree', 'laydate'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var $ = layui.$;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#time',
+            type: 'date'
+            ,range: '到'
+            ,trigger: 'click'
+        });
+        $.ajax({
+            url: "/dormitory/getFloor",
+            dataType: "JSON",
+            type: "get",
+            success: function (res) {
+                if (res.success) {
+                    $('#fid').append("<option value='0'>请选择楼层</option>");
+                    $('#l').append("<option value='0'>请选择楼层</option>");
+                    $.each(res.data, function (key, val) {
+                        var sex = val.f_sex == 0 ? '女' : '男';
+                        $('#fid').append("<option value='" + val.f_id + "'>" + val.f_name + "（" + sex + "生宿舍）</option>");
+                        $('#l').append("<option value='" + val.f_id + "'>" + val.f_name + "（" + sex + "生宿舍）</option>");
+                    });
+                    form.render('select');
+                    $("#c_state").attr("disabled", true);
+                }
+            }
+        });
+        form.on('select(fid)', function (d) {
+            $.ajax({
+                url: "/student/getDor",
+                dataType: "JSON",
+                type: "get",
+                data: {f_id: d.value},
+                success: function (res) {
+                    $('#did').html('');
+                    if (res.success) {
+                        $('#did').append("<option value='0'>请选择宿舍</option>");
+                        $.each(res.data, function (key, val) {
+                            $('#did').append("<option value='" + val.d_id + "'>" + val.d_number + "</option>");
+                        });
+                    }
+                    form.render('select');
+                }
+            });
+        });
+        form.on('select(l)', function (d) {
+            $.ajax({
+                url: "/CheckSleep/getDormitoryByCheck",
+                dataType: "JSON",
+                type: "get",
+                data: {f_id: d.value},
+                success: function (res) {
+                    $('#d_id').html('');
+                    if (res.success) {
+                        $('#d_id').append("<option value='0'>请选择宿舍</option>");
+                        $('#hide_').html('');
+                        $.each(res.data, function (key, val) {
+                            $('#d_id').append("<option value='" + val.d_id + "'>" + val.d_number + "</option>");
+                            $('#hide_').append("<sapn style='display: none' id='d_id_"+val.d_id+"'>"+val.current_number+"</sapn>");
+                        });
+                        $("#c_state").attr("disabled", true);
+                        form.render('select');
+                    }
+                }
+            });
+        });
+        form.on('select(d_id)',function (d) {
+            $("#true_to").val('');
+            if(d.value !=0){
+                $("#c_state").attr("disabled", false);
+                var id = 'd_id_'+d.value;
+                var true_to = $("#"+id).html();
+                $("#true_to").val(true_to);
+                $.ajax({
+                    url:'/CheckSleep/getStudentByDid',
+                    dataType:"json",
+                    type:'get',
+                    data:{d_id:d.value},
+                    success:function (res) {
+                        $('#missing_check').html('');
+                        All_list =[];
+                        actual_list =[];
+                        mising_list=[];
+                        if(res.success){
+                            var data = res.data;
+                            var check_list = '';
+                            $.each(data,function (key,val) {
+                                All_list.push(val.s_id);
+                                actual_list.push(val.s_id);
+                                check_list+='<input type="checkbox" value="'+val.s_id+'"  name="s_id" title="'+val.s_name+'" lay-filter="s_id"> ';
+                            });
+                            $('#missing_check').append(check_list);
+                            form.render("checkbox");
+                        }
+                    }
+                });
+            }
+        });
+
+        table.render({
+            elem: '#datagrid'
+            , id: 'datagrid'
+            , url: '/CheckSleep/getCheckSleepInfoAll'
+            , method: 'GET'
+            , height: '500px'
+            , where: {name: '', d_id: 0, f_id: 0, time: ''}
+            , cols: [
+                [
+                    {type: 'radio'},
+                    {type: 'numbers', title: "序号"},
+                    {
+                        field: 'f_name', title: '宿舍楼', align: 'left', templet: function (d) {
+                            var floorInfo = d.dormitoryInfo.floorInfo;
+                            return "<span>" + floorInfo.f_name + "</span>"
+                        }
+                    }
+                    , {
+                    field: 'd_number', title: '宿舍号', align: 'left', templet: function (d) {
+                        var dormitoryInfo = d.dormitoryInfo;
+                        return "<span>" + dormitoryInfo.d_number + "</span>"
+                    }
+                }
+                    , {field: 'time', title: '查寝时间', align: 'left'}
+                    , {
+                    field: 'u_name', title: '查寝人', align: 'left', templet: function (d) {
+                        var user_info = d.user_info;
+                        return "<span>" + user_info.userName +"</span>"
+                    }
+                }
+                    , {field: 'true_to', title: '应到人数/人', align: 'left'}
+                    , {
+                    field: 'missing', title: '实到人数/人', align: 'left', templet: function (d) {
+                        var true_to = d.true_to - d.missing;
+                        return "<span>" +true_to+ "</span>"
+                    }
+                }
+                    , {field: 'reason', title: '缺勤说明', align: 'left'}
+                ]
+            ]
+            , loading: true
+            , page: true
+            , done: function (res, curr, count) {
+                signleSelect($, 'datagrid');
+            }
+        });
+
+        /**
+         *查询
+         */
+        $('.search_btn').click(function () {
+            setTable();
+        });
+
+        /**
+         * 新增
+         */
+        $('.newsAdd_btn').click(function () {
+            var newDate = layui.util.toDateString(new Date(), "yyyy-MM-dd");
+            openLayer($, layui.layer, {
+                title: newDate+' 查寝',     //显示标题
+                area: ['580px', '450px'], //宽高
+                content: $('#check_model'),
+                success: function (layero, index) {
+                    form.on("submit(form_submit_btn)", function (data) {
+                        var reason = $('#reason').val();
+                        if(c_state==1){
+                            if(reason.trim() ==''){
+                                layer.tips("缺勤需要输入缺勤原因", '#reason',{tips: [2, '#cc0706']});
+                                return  false;
+                            }
+                            if(mising_list.length==0){
+                                layer.alert("请勾选未到学生",{icon:5});
+                                return  false;
+                            }
+                        }
+                        var loading = layer.load(1);
+                        $.ajax({
+                            url:'/CheckSleep/saveCheckSleep',
+                            dataType:'json',
+                            type:'post',
+                            data:{
+                                c_state:c_state,
+                                reason:reason,
+                                d_id:$('#d_id').val(),
+                                true_to:All_list.length,
+                                missing:mising_list,
+                                actual_list:actual_list
+                            },
+                            success:function (res) {
+                                if(res.success){
+                                    layer.closeAll();
+                                    layer.alert(res.msg,{icon:6});
+                                    setTable();
+                                }else{
+                                    layer.alert(res.msg,{icon:5});
+                                }
+                            }
+                        });
+                        return false;
+                    });
+                }
+            }, '#form_submit_btn');
+        });
+
+        /**
+         *修改
+         */
+        $('.up_check').click();
+
+        form.on('switch(c_state)',function (data) {//missing_show
+            var check = data.elem.checked;
+            if(check==true){
+                c_state =0;
+                $('#missing_show').hide();
+                mising_list = [];
+                actual_list = [];
+            }else{
+                $('#missing_show').show();
+                c_state =1;
+            }
+        });
+
+        /**
+         * 多单选勾选时间
+         */
+        form.on('checkbox(s_id)',function (data) {
+            var check = data.elem.checked;
+            var val = data.value;
+            if(check==true){
+                remove(val,0);//缺勤
+            }else{
+                remove(val,1);//取消缺勤
+            }
+        });
+
+        /**
+         * table刷新
+         */
+        function setTable() {
+            var name = $('#name').val();
+            var time = $('#time').val();
+            var f_id = $('#fid').val();
+            var d_id = $('#did').val();
+            table.reload('datagrid', {
+                where: { //设定异步数据接口的额外参数，任意设
+                    name: name==""?null:name,
+                    f_id: f_id==""?0:f_id,
+                    d_id:d_id==null?0:d_id,
+                    time:time==""?null:time
+                }
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        }
+
+    });
+
+    /**
+     * 清空缺勤和为缺勤
+     * @param val
+     * @param type
+     */
+    function remove(val,type) {
+        val = parseInt(val);
+        if(type==0){//缺勤
+            var index = actual_list.indexOf(val);
+            if (index > -1) {
+                mising_list.push(val);
+                actual_list.splice(index, 1);
+            }
+        }else{//在
+            var index = mising_list.indexOf(val);
+            if (index > -1) {
+                actual_list.push(val);
+                mising_list.splice(index, 1);
+            }
+        }
+    }
+    function showTX() {
+        layer.tips("选择楼层后，宿舍会自动列出还未签到的宿舍", '#ts',{tips: [2, '#cc0706']});
+    }
+    function showTXs() {
+        layer.tips("选择宿舍后应到人数会自动填充", '#tx',{tips: [2, '#cc0706']});
+    }
+</script>
+</html>

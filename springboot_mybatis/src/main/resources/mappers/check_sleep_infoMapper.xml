@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carychen.springboot_mybatis.demo.dao.check_sleep_infoMapper">
+    <resultMap id="check_sleep_info_Mapper" type="com.carychen.springboot_mybatis.demo.entity.check_sleep_info">
+        <id column="c_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="c_id"/>
+        <result column="time" javaType="java.lang.String" jdbcType="VARCHAR" property="time"/>
+        <result column="c_state" javaType="java.lang.Integer" jdbcType="INTEGER" property="c_state"/>
+        <result column="u_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="u_id"/>
+        <result column="d_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="d_id"/>
+        <result column="true_to" javaType="java.lang.Integer" jdbcType="INTEGER" property="true_to"/>
+        <result column="missing" javaType="java.lang.Integer" jdbcType="INTEGER" property="missing"/>
+        <result column="reason" javaType="java.lang.String" jdbcType="LONGVARCHAR" property="reason"/>
+        <association property="user_info" column="u_id"
+                     javaType="com.carychen.springboot_mybatis.demo.entity.user_info">
+            <id column="id" javaType="java.lang.Integer" jdbcType="INTEGER" property="id"/>
+            <result column="user_name" javaType="java.lang.String" jdbcType="VARCHAR" property="userName"/>
+            <result column="user_login" javaType="java.lang.String" jdbcType="VARCHAR" property="userLogin"/>
+            <result column="login_password" javaType="java.lang.String" jdbcType="VARCHAR" property="loginPassword"/>
+            <result column="user_status" javaType="java.lang.Integer" jdbcType="INTEGER" property="userStatus"/>
+            <result column="user_org" javaType="java.lang.Integer" jdbcType="INTEGER" property="userOrg"/>
+            <result column="user_phone" javaType="java.lang.String" jdbcType="VARCHAR" property="userPhone"/>
+            <result column="user_remark" javaType="java.lang.String" jdbcType="VARCHAR" property="userRemark"/>
+            <result column="user_sex" javaType="java.lang.Integer" jdbcType="INTEGER" property="userSex"/>
+            <result column="user_email" javaType="java.lang.String" jdbcType="VARCHAR" property="userEmail"/>
+            <result column="user_sys" javaType="java.lang.Integer" jdbcType="INTEGER" property="userSys"/>
+            <result column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="roleId"/>
+            <result column="user_on" javaType="java.lang.String" jdbcType="VARCHAR" property="userOn"/>
+        </association>
+        <association property="dormitoryInfo" column="d_id"
+                     javaType="com.carychen.springboot_mybatis.demo.entity.dormitory_info">
+            <id column="d_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="d_id"/>
+            <result column="f_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_id"/>
+            <result column="max_number" javaType="java.lang.Integer" jdbcType="INTEGER" property="max_number"/>
+            <result column="d_number" javaType="java.lang.String" jdbcType="VARCHAR" property="d_number"/>
+            <result column="current_number" javaType="java.lang.Integer" jdbcType="INTEGER" property="current_number"/>
+            <association property="floorInfo" javaType="com.carychen.springboot_mybatis.demo.entity.floor_info"
+                         column="f_id">
+                <id column="f_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_id"/>
+                <result column="u_id" javaType="java.lang.Integer" jdbcType="INTEGER" property="u_id"/>
+                <result column="f_name" javaType="java.lang.String" jdbcType="VARCHAR" property="f_name"/>
+                <result column="add_time" javaType="java.lang.String" jdbcType="VARCHAR" property="add_time"/>
+                <result column="add_by" javaType="java.lang.Integer" jdbcType="INTEGER" property="add_by"/>
+                <result column="up_date" javaType="java.lang.String" jdbcType="VARCHAR" property="up_date"/>
+                <result column="up_by" javaType="java.lang.Integer" jdbcType="INTEGER" property="up_by"/>
+                <result column="f_sex" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_sex"/>
+                <result column="f_number" javaType="java.lang.Integer" jdbcType="INTEGER" property="f_number"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <select id="getCheckSleepInfoAll" resultMap="check_sleep_info_Mapper">
+        select * from
+        check_sleep_info c left join user_info u on c.u_id = u.id
+        left join dormitory_info d on c.d_id = d.d_id
+        left join floor_info f on d.f_id =f.f_id
+        where 1=1
+        <if test="f_id !=0">
+            and f.f_id = #{f_id}
+        </if>
+        <if test="d_id !=0">
+            and d.d_id = #{d_id}
+        </if>
+        <if test="d_name != null and d_name!=''">
+            and (d.d_number liek '%${d_name}%' or f.f_name like '%${d_name}%')
+        </if>
+        <if test="time1 != null and time1 != '' and time2 !=null and time2!=''">
+            and date_format(c.time,'%Y-%m-%d') > date_format(#{time1},'%Y-%m-%d')
+            and date_format(c.time,'%Y-%m-%d') &lt; date_format(#{time2},'%Y-%m-%d')
+        </if>
+        limit #{page},#{limit}
+    </select>
+
+    <select id="getCountCheckSleep" resultType="java.lang.Integer">
+        select count(0) tabl from
+        check_sleep_info c left join user_info u on c.u_id = u.id
+        left join dormitory_info d on c.d_id = d.d_id
+        left join floor_info f on d.f_id =f.f_id
+        where 1=1
+        <if test="f_id &lt;=0">
+            and f.f_id = #{f_id}
+        </if>
+        <if test="d_id &lt;=0">
+            and d.d_id = #{d_id}
+        </if>
+        <if test="d_name != null and d_name!=''">
+            and (d.d_number liek '%${d_name}%' or f.f_name like '%${d_name}%')
+        </if>
+        <if test="time1 != null and time1 != '' and time2 !=null and time2!=''">
+            and date_format(c.time,'%Y-%m-%d') > date_format(#{time1},'%Y-%m-%d')
+            and date_format(c.time,'%Y-%m-%d') &lt; date_format(#{time2},'%Y-%m-%d')
+        </if>
+    </select>
+
+
+    <select id="getDormitoryByCheck" resultMap="com.carychen.springboot_mybatis.demo.dao.dormitory_infoMapper.dormitoryMap">
+            select d.* from dormitory_info d left join floor_info f on d.f_id = f.f_id
+            where 1=1
+            and d.current_number !=0
+            and f.f_id = #{f_id}
+            and d.d_id not in(select d_id from check_sleep_info where date_format(time,'%y-%m-%d')=date_format(#{time},'%y-%m-%d') group by d_id)
+    </select>
+
+    <select id="getStudentByDid" resultMap="com.carychen.springboot_mybatis.demo.dao.Student_infoMapper.studentMap">
+        select * from Student_info where d_id = #{d_id} and s_state = 0
+    </select>
+
+    <select id="getStudentCheckByCid" resultMap="com.carychen.springboot_mybatis.demo.dao.student_checkMapper.student_check_mapper">
+        select * from student_check s left join Student_info t on s.s_id = t.s_id
+        where s.c_id = ${c_id}
+    </select>
+
+    <insert id="saveStudentList" parameterType="com.carychen.springboot_mybatis.demo.entity.Student_info">
+        insert into student_check(c_id,s_id,s_state,reason,add_time) values
+        <foreach collection="list" item="check" separator=",">
+            (#{check.c_id},#{check.s_id},#{check.s_state},#{check.reason},#{check.add_time})
+        </foreach>
+    </insert>
+
+    <delete id="EmptyCheckByCid" parameterType="java.lang.Integer">
+        delete from student_check
+        where c_id=#{c_id}
+  </delete>
+
+    <insert id="saveCheckSleepInfo" parameterType="com.carychen.springboot_mybatis.demo.entity.check_sleep_info"
+            useGeneratedKeys="true" keyProperty="c_id" keyColumn="c_id">
+        insert into check_sleep_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="time != null">
+                time,
+            </if>
+            <if test="c_state != null">
+                c_state,
+            </if>
+            <if test="u_id != null">
+                u_id,
+            </if>
+            <if test="d_id != null">
+                d_id,
+            </if>
+            <if test="true_to != null">
+                true_to,
+            </if>
+            <if test="missing != null">
+                missing,
+            </if>
+            <if test="reason != null">
+                reason,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="time != null">
+                #{time,jdbcType=VARCHAR},
+            </if>
+            <if test="c_state != null">
+                #{c_state,jdbcType=INTEGER},
+            </if>
+            <if test="u_id != null">
+                #{u_id,jdbcType=INTEGER},
+            </if>
+            <if test="d_id != null">
+                #{d_id,jdbcType=INTEGER},
+            </if>
+            <if test="true_to != null">
+                #{true_to,jdbcType=INTEGER},
+            </if>
+            <if test="missing != null">
+                #{missing,jdbcType=INTEGER},
+            </if>
+            <if test="reason != null">
+                #{reason,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="upCheckSleepInfo" parameterType="com.carychen.springboot_mybatis.demo.entity.check_sleep_info">
+        update check_sleep_info
+        <set>
+            <if test="time != null">
+                time = #{time,jdbcType=VARCHAR},
+            </if>
+            <if test="c_state != null">
+                c_state = #{c_state,jdbcType=INTEGER},
+            </if>
+            <if test="u_id != null">
+                u_id = #{u_id,jdbcType=INTEGER},
+            </if>
+            <if test="d_id != null">
+                d_id = #{d_id,jdbcType=INTEGER},
+            </if>
+            <if test="true_to != null">
+                true_to = #{true_to,jdbcType=INTEGER},
+            </if>
+            <if test="missing != null">
+                missing = #{missing,jdbcType=INTEGER},
+            </if>
+            <if test="reason != null">
+                reason = #{reason,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where c_id = #{c_id,jdbcType=INTEGER}
+    </update>
+</mapper>
