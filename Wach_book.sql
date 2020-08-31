@@ -23,13 +23,13 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `department_info`;
 CREATE TABLE `department_info` (
   `d_id` int(5) NOT NULL AUTO_INCREMENT COMMENT '系别id',
-  `d_nanem` varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '院系名称',
-  `d_teacher_name` varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '院长姓名',
-  `d_teacher_phone` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '院长电话',
-  `d_teacher_email` varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '院长邮箱',
+  `d_nanem` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '院系名称',
+  `d_teacher_name` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '院长姓名',
+  `d_teacher_phone` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '院长电话',
+  `d_teacher_email` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '院长邮箱',
   `d_sup_id` int(5) NOT NULL DEFAULT '0' COMMENT '上级id，0为院其他为系',
   PRIMARY KEY (`d_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='院系班表';
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='院系班表';
 
 -- ----------------------------
 -- Records of department_info
@@ -66,10 +66,10 @@ CREATE TABLE `dormitory_info` (
   `d_id` int(5) NOT NULL AUTO_INCREMENT COMMENT '寝室id',
   `f_id` int(5) NOT NULL COMMENT '楼号id',
   `max_number` int(1) NOT NULL DEFAULT '0' COMMENT '最大入住数量9人',
-  `d_number` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '寝室号',
+  `d_number` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '寝室号',
   `current_number` int(1) DEFAULT '0' COMMENT '当前人数',
   PRIMARY KEY (`d_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='寝室表';
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='寝室表';
 
 -- ----------------------------
 -- Records of dormitory_info
@@ -124,7 +124,7 @@ CREATE TABLE `floor_info` (
   `f_number` int(2) DEFAULT NULL COMMENT '楼层数',
   `f_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL COMMENT '楼层名称',
   PRIMARY KEY (`f_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='寝室楼号表';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='寝室楼号表';
 
 -- ----------------------------
 -- Records of floor_info
@@ -142,11 +142,11 @@ COMMIT;
 DROP TABLE IF EXISTS `menu_info`;
 CREATE TABLE `menu_info` (
   `menu_id` int(3) NOT NULL AUTO_INCREMENT COMMENT '菜单id',
-  `menu_code` varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '菜单编码',
-  `menu_name` varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '菜单名称',
+  `menu_code` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '菜单编码',
+  `menu_name` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '菜单名称',
   `menu_nav` varchar(150) NOT NULL COMMENT '菜单导航表示',
-  `menu_remark` varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '注释',
-  `menu_url` varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '菜单地址',
+  `menu_remark` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '注释',
+  `menu_url` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '菜单地址',
   `menu_level` int(1) NOT NULL COMMENT '菜单类型，1导航，2菜单',
   `menu_order` int(5) DEFAULT NULL COMMENT '排序',
   `menu_status` int(1) DEFAULT NULL COMMENT '菜单状态，1启用，2禁用',
@@ -155,7 +155,7 @@ CREATE TABLE `menu_info` (
   `menu_target` varchar(50) DEFAULT NULL COMMENT '打开类型，single(单页)，iframe，blank（新窗口）',
   `menu_sysid` int(3) NOT NULL COMMENT '所属系统',
   PRIMARY KEY (`menu_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='菜单';
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='菜单';
 
 -- ----------------------------
 -- Records of menu_info
@@ -180,13 +180,13 @@ COMMIT;
 DROP TABLE IF EXISTS `org_info`;
 CREATE TABLE `org_info` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `code_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '组织名称',
+  `code_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '组织名称',
   `p_id` int(9) DEFAULT '0' COMMENT '上级id，无上级默认为0',
   `sys_id` int(5) NOT NULL COMMENT '系统id',
-  `org_full_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '组织机构全称',
-  `org_remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+  `org_full_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '组织机构全称',
+  `org_remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- ----------------------------
 -- Records of org_info
@@ -306,14 +306,14 @@ COMMIT;
 DROP TABLE IF EXISTS `role_info`;
 CREATE TABLE `role_info` (
   `id` int(3) NOT NULL AUTO_INCREMENT,
-  `role_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '角色编码',
-  `role_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '角色名称',
+  `role_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '角色编码',
+  `role_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '角色名称',
   `role_state` int(1) DEFAULT NULL COMMENT '角色状态 0禁用，1启用',
   `sys_id` int(5) DEFAULT NULL COMMENT '系统id',
   `role_order` int(2) DEFAULT NULL COMMENT '角色顺序',
-  `role_remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '角色描述',
+  `role_remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '角色描述',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='角色表';
 
 -- ----------------------------
 -- Records of role_info
@@ -332,7 +332,7 @@ CREATE TABLE `role_menu_info` (
   `role_id` int(5) NOT NULL COMMENT '角色id',
   `menu_id` int(5) NOT NULL COMMENT '菜单id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色菜单权限';
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='角色菜单权限';
 
 -- ----------------------------
 -- Records of role_menu_info
@@ -373,7 +373,7 @@ CREATE TABLE `Student_info` (
   `d_id` int(5) NOT NULL COMMENT '寝室id',
   `s_state` int(1) NOT NULL DEFAULT '0' COMMENT '迁入0迁出1',
   PRIMARY KEY (`s_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='学生表';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='学生表';
 
 -- ----------------------------
 -- Records of Student_info
@@ -400,12 +400,12 @@ DROP TABLE IF EXISTS `student_out`;
 CREATE TABLE `student_out` (
   `o_id` int(6) NOT NULL AUTO_INCREMENT,
   `s_id` int(9) NOT NULL COMMENT '学生id',
-  `out_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '迁出时间',
-  `out_reason` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '迁出原因',
+  `out_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '迁出时间',
+  `out_reason` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '迁出原因',
   `u_id` int(5) NOT NULL COMMENT '办理迁出人员id',
-  `add_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '受理时间',
+  `add_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '受理时间',
   PRIMARY KEY (`o_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='学生迁出表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='学生迁出表';
 
 -- ----------------------------
 -- Table structure for system_info
@@ -413,14 +413,14 @@ CREATE TABLE `student_out` (
 DROP TABLE IF EXISTS `system_info`;
 CREATE TABLE `system_info` (
   `id` int(5) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `sys_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统编码',
-  `sys_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统名称',
-  `sys_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统访问路径',
-  `sys_main_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '首页地址',
+  `sys_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '系统编码',
+  `sys_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '系统名称',
+  `sys_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '系统访问路径',
+  `sys_main_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '首页地址',
   `sys_status` int(2) DEFAULT NULL COMMENT '系统状态，0禁用，1启用',
-  `sys_remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '描述',
+  `sys_remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '描述',
   PRIMARY KEY (`id`,`sys_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='系统表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='系统表';
 
 -- ----------------------------
 -- Records of system_info
@@ -437,18 +437,18 @@ CREATE TABLE `user_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '姓名',
   `user_login` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '登陆账号',
-  `login_password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '登陆密码，加密后的',
+  `login_password` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '登陆密码，加密后的',
   `user_status` int(2) DEFAULT NULL COMMENT '账号状态0禁用1启用',
   `user_org` int(4) DEFAULT NULL COMMENT '组织机构地区',
-  `user_phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '电话号码',
-  `user_remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '账号备注',
+  `user_phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '电话号码',
+  `user_remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '账号备注',
   `user_sex` int(1) DEFAULT NULL COMMENT '性别，1男2女',
-  `user_email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用户邮箱',
+  `user_email` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '用户邮箱',
   `user_sys` int(5) DEFAULT NULL COMMENT '归属系统',
   `role_id` int(5) NOT NULL COMMENT '角色id',
   `user_on` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '用户编号',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='用户表';
 
 -- ----------------------------
 -- Records of user_info

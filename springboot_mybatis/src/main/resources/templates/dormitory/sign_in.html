@@ -321,7 +321,14 @@
         /**
          *修改
          */
-        $('.up_check').click();
+        $('.up_check').click(function () {
+            var checkStatus = table.checkStatus("datagrid");
+            if(checkStatus.data.length!=1){
+                layer.alert("请选择一条记录！",{icon:5});
+            }else{
+
+            }
+        });
 
         form.on('switch(c_state)',function (data) {//missing_show
             var check = data.elem.checked;
